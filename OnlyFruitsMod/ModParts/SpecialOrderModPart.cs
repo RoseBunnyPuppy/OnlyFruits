@@ -30,7 +30,6 @@ namespace OnlyFruitsMod.ModParts
         public bool PreloadAssets { get; set; } = PreloadConfiguration.SpecialOrders;
         
         private readonly ReloadManager reloadManager = new();
-        private QuestStatusLogger questStatusLoggerV2;
         private readonly SpecialOrderStatusDeterminer questPatchStatusHelper;
 
         public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; } = DefaultSpecialOrderKeysProvider.Create();
@@ -49,7 +48,6 @@ namespace OnlyFruitsMod.ModParts
             ModPartContext context
         ) : base(context)
         {
-            this.questStatusLoggerV2 = new QuestStatusLogger(this.monitor, "SpecialOrderV2") { Verbose = true };
             this.questPatchStatusHelper = new SpecialOrderStatusDeterminer(configInstance, this.SpecialOrderKeysConfigModel);
         }
 
@@ -121,11 +119,9 @@ namespace OnlyFruitsMod.ModParts
                 e.Edit(asset =>
                 {
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataSpecialOrders).Data;
-                    this.questStatusLoggerV2.SetQuestIds(data.Keys);
                     foreach (var (questId, specialOperationData) in data)
                     {
                         var flavor = this.questPatchStatusHelper.GetPatchingFlavor(questId);
-                        this.questStatusLoggerV2.LogQuestStatus(isAsset: true, questId, flavor);
                         this.PatchAsset(questId, specialOperationData, flavor);
                     }
                     // re-apply the live data changes if needed
