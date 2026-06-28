@@ -1,0 +1,15 @@
+<!-- 
+If your stardew valley directory is in a "non-standard" location:
+1) make a copy of this file, and rename it (ex: mypath.stardewvalley.targets)
+2) uncomment the 'GamePath' and update the value of it to point to the directory of your installation
+
+
+See here for more information:
+https://wiki.stardewvalley.net/Modding:Modder_Guide/Get_Started#Create_the_project
+
+-->
+<Project>
+	<PropertyGroup>
+		<!--<GamePath>THE_DIRECTORY_TO_YOUR_STARDEW_VALLEY_DIRECTORY</GamePath>-->
+	</PropertyGroup>
+</Project>

@@ -1,0 +1,16 @@
+﻿{
+  "Name": "OnlyFruits",
+  "Author": "RoseBunnyPuppy",
+  "Version": "1.0.0",
+  "Description": "Only Fruits! A mod to enforce the restrictions for Cozyandcaffeinated's series.",
+  "UniqueID": "RoseBunnyPuppy.OnlyFruits",
+  "EntryDll": "OnlyFruitsMod.dll",
+  "MinimumApiVersion": "4.0.0",
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "MinimumVersion": "1.16.0" // optional. If specified, older versions won't meet the requirement.
+    }
+  ],
+  "UpdateKeys": []
+}

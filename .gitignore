@@ -427,3 +427,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# target files
+/OnlyFruitsMod/_stardewtargets/*.stardewvalley.targets
+!/OnlyFruitsMod/_stardewtargets/example.stardewvalley.targets
+
