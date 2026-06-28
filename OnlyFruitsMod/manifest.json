@@ -9,7 +9,7 @@
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
-      "MinimumVersion": "1.16.0" // optional. If specified, older versions won't meet the requirement.
+      "MinimumVersion": "1.16.0"
     }
   ],
   "UpdateKeys": []
