@@ -36,7 +36,6 @@ namespace OnlyFruitsMod
             var _monsterSlayerPart = new MonsterSlayerQuestsModPart(modPartContext);
 
             // run the parts
-
             _pricePart.Run();
             _shopsPart.Run();
             _specialOrdersPart.Run();
