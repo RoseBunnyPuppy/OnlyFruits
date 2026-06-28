@@ -10,7 +10,7 @@ namespace OnlyFruitsMod
     public record IdReasonPair(string id, string reason);
     public class DynamicItemManager
     {
-        public bool Verbose { get; set; } = true;
+        public bool Verbose { get; set; } = false;
         private readonly IMonitor monitor;
         private readonly ModConfigInstance configInstance;
         public RecipeTracker CookingRecipes { get; } = new();

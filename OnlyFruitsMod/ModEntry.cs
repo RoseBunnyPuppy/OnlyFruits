@@ -14,8 +14,6 @@ namespace OnlyFruitsMod
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            helper.Events.Content.AssetRequested += LogDataAssets;
-
             var configInstance = new ModConfigInstance(helper);
             this.ConfigInstance = configInstance;
 
@@ -46,10 +44,5 @@ namespace OnlyFruitsMod
             _monsterSlayerPart.Run();
         }
 
-        private void LogDataAssets(object? sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
-        {
-            //if (!e.NameWithoutLocale.StartsWith("Data/")) return;
-            this.Monitor.Log($"Asset Requested: {e.NameWithoutLocale}", LogLevel.Debug);
-        }
     }
 }
