@@ -3,6 +3,11 @@ using StardewModdingAPI.Integrations.GenericModConfigMenu;
 
 namespace OnlyFruitsMod.Features.UIHelpers
 {
+    /// <summary>
+    ///     A wrapper class to allow defining menu chunks in 
+    ///   a more fluent manner (as well as using a standardized 
+    ///   format for the i18n subvalues)
+    /// </summary>
     public class ConfigMenuHelper
     {
         private readonly IModHelper modHelper;
