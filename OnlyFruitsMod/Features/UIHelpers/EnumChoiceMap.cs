@@ -1,6 +1,5 @@
 ﻿namespace OnlyFruitsMod.Features.UIHelpers
 {
-
     public static class EnumChoiceMap
     {
         public static EnumChoiceMap<TEnum> Create<TEnum>(

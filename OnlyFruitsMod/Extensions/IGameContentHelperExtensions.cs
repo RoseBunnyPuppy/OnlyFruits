@@ -1,10 +1,8 @@
 ﻿using OnlyFruitsMod.Infrastructure;
 using StardewModdingAPI;
-using StardewModdingAPI.Integrations.GenericModConfigMenu;
 
 namespace OnlyFruitsMod.Extensions
 {
-    
     public static class IGameContentHelperExtensions
     {
         /// <summary>
