@@ -1,5 +1,4 @@
 ﻿{
-  // example translations
   "rosebunnypuppy.onlyfruits.ui.sellable-section.label": "Sellable Configuration",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.tooltip": "Configure the stuff that can be sold.",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items.label": "Meme Items",
