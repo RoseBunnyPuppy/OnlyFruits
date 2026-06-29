@@ -27,30 +27,12 @@ namespace OnlyFruitsMod.Features.ModConfiguration
             IModHelper helper
         ) {
             this.helper = helper;
-            this.Config = this.Load();
-        }
-
-
-        private ModConfig CreateDefault(ModConfig existing)
-        {
-            existing.IsDefault = true;
-            this.helper.WriteConfig(existing);
-            return existing;
-        }
-
-        private ModConfig Load()
-        {
-            var config = this.helper.ReadConfig<ModConfig>();
-            if (config.IsDefault)
-            {
-                config = this.CreateDefault(config);
-            }
-            return config;
+            this.Config = this.helper.ReadConfig<ModConfig>();
         }
 
         public void Reload()
         {
-            this.Config = this.Load();
+            this.Config = this.helper.ReadConfig<ModConfig>();
             this.Save();
         }
 
