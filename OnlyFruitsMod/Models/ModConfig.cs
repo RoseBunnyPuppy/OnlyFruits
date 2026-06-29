@@ -12,29 +12,29 @@
         ///   If true, meme items are sellable.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items</remarks>
-        public bool AllowMemeItems { get; set; } = true;
+        public bool AllowSellingMemeItems { get; set; } = true;
 
         /// <summary>
         ///   If true, items that use a fruit as an input are sellable.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.sellable-section.option-cooked-items</remarks>
-        public bool AllowAutoDerivedItems { get; set; } = true;
+        public bool AllowSellingAutoDerivedItems { get; set; } = true;
 
         /// <summary>
-        ///   If true, items defined in the "manual derivative" list are sellable.
+        ///   If true, items defined in the "manual artisinal" list are sellable.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.sellable-section.option-fruity-artisinal-items</remarks>
-        public bool AllowManualDerivedItems { get; set; } = true;
+        public bool AllowSellingArtisinalItems { get; set; } = true;
 
         /// <summary>
         ///   If true, items that should be considered fruits are sellable.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.sellable-section.option-should-be-fruits</remarks>
-        public bool AllowShouldaBeenFruitItems { get; set; } = true;
+        public bool AllowSellingShouldaBeenFruitItems { get; set; } = true;
 
 
         /// <summary>
-        /// 
+        ///   If true, item-shops wont buy their normal non-fruity stuff.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.sellable-section.option-no-nonfruity-shops</remarks>
         public bool PatchNonFruityShopItems { get; set; } = true;
@@ -57,7 +57,7 @@
 
 
         /// <summary>
-        /// 
+        ///   If true, the non-fruity monster slayer quests wont reward the player with money.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.questing-section.option-no-nonfruity-monster-slayer</remarks>
         public bool Questing_NoMoneyFromNonFruityMonsterSlayerQuests { get; set; } = true;
@@ -66,13 +66,13 @@
 
         #region "Quest Patching Section"
         /// <summary>
-        /// 
+        ///   Configures the lewis quest.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.quest-patching-section.option-lewis</remarks>
         public QuestReplacementModes Questing_PatchLewisCropOrderQuest { get; set; } = QuestReplacementModes.SwapWithFruits;
 
         /// <summary>
-        /// 
+        ///   Configures the caroline quest.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.quest-patching-section.option-caroline</remarks>
         public QuestReplacementModes Questing_PatchCarolineIslandIngredientsQuest { get; set; } = QuestReplacementModes.SwapWithFruits;
@@ -88,6 +88,7 @@
         public bool RestoreAllPrices { get; set; } = false;
 
         /// <summary>
+        ///   If true, attempt to restore all cached quest rewards.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-restore-quests</remarks>
         public bool RestoreAllQuestRewards { get; set; } = false;

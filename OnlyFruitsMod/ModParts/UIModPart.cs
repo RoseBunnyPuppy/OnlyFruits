@@ -76,23 +76,23 @@ namespace OnlyFruitsMod.ModParts
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.sellable-section")
                 .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items",
-                    getValue: () => configInstance.Config.AllowMemeItems,
-                    setValue: value => configInstance.Config.AllowMemeItems = value
+                    getValue: () => configInstance.Config.AllowSellingMemeItems,
+                    setValue: value => configInstance.Config.AllowSellingMemeItems = value
                 )
                 .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-should-be-fruits",
-                    getValue: () => configInstance.Config.AllowShouldaBeenFruitItems,
-                    setValue: value => configInstance.Config.AllowShouldaBeenFruitItems = value
+                    getValue: () => configInstance.Config.AllowSellingShouldaBeenFruitItems,
+                    setValue: value => configInstance.Config.AllowSellingShouldaBeenFruitItems = value
                 )
                 .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-cooked-items",
-                    getValue: () => configInstance.Config.AllowAutoDerivedItems,
-                    setValue: value => configInstance.Config.AllowAutoDerivedItems = value
+                    getValue: () => configInstance.Config.AllowSellingAutoDerivedItems,
+                    setValue: value => configInstance.Config.AllowSellingAutoDerivedItems = value
                 )
                 .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-fruity-artisinal-items",
-                    getValue: () => configInstance.Config.AllowManualDerivedItems,
-                    setValue: value => configInstance.Config.AllowManualDerivedItems = value
+                    getValue: () => configInstance.Config.AllowSellingArtisinalItems,
+                    setValue: value => configInstance.Config.AllowSellingArtisinalItems = value
                 )
                 .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-no-nonfruity-shops",

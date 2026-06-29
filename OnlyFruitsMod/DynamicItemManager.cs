@@ -128,26 +128,25 @@ namespace OnlyFruitsMod
                     }
                 }
             });
-            // find items within the 'fruit' category
-            RunBatch("Manually added derived items", () =>
+            // add the artisinal items
+            RunBatch("Artisinal items", () =>
             {
-                if (!this.Config.AllowManualDerivedItems) return;
+                if (!this.Config.AllowSellingArtisinalItems) return;
 
                 foreach ((string itemID, ObjectData itemData) in data)
                 {
                     // skip fruits
-                    if (this.IdConfigModel.CustomDerived.Contains(itemID))
+                    if (this.IdConfigModel.ArtisinalItemIds.Contains(itemID))
                     {
-                        this.Add(itemID, HardcodedInclusionReasons.ForcedDerived);
+                        this.Add(itemID, HardcodedInclusionReasons.ForcedArtisinal);
                         continue;
                     }
                 }
             });
-            // CustomDerived
-            // meme items
+
             RunBatch("Should've Been Fruits", () =>
             {
-                if (!this.Config.AllowShouldaBeenFruitItems) return;
+                if (!this.Config.AllowSellingShouldaBeenFruitItems) return;
                 foreach ((string itemID, ObjectData itemData) in data)
                 {
                     // skip fruits
@@ -163,7 +162,7 @@ namespace OnlyFruitsMod
             // meme items
             RunBatch("Meme Items", () =>
             {
-                if (!this.Config.AllowMemeItems) return;
+                if (!this.Config.AllowSellingMemeItems) return;
 
                 foreach ((string itemID, ObjectData itemData) in data)
                 {
@@ -180,13 +179,13 @@ namespace OnlyFruitsMod
             // cooking recipes that utilize a fruit
             RunBatch("Derived cooking items", () =>
             {
-                if (!this.Config.AllowAutoDerivedItems) return;
+                if (!this.Config.AllowSellingAutoDerivedItems) return;
                 FindAllDerivedCookingRecipes();
             });
             // crafting recipes that utilize a fruit
             RunBatch("Derived crafting items", () =>
             {
-                if (!this.Config.AllowAutoDerivedItems) return;
+                if (!this.Config.AllowSellingAutoDerivedItems) return;
                 FindAllDerivedCraftingRecipes();
             });
         }

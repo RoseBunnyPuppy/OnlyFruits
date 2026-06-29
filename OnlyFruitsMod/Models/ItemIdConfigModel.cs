@@ -16,7 +16,7 @@
         ///   Items we exclude, regardless of whether they are a fruit or derived fruit.
         /// </summary>
         public HashSet<string> ExplicitlyExcluded { get; set; } = new HashSet<string>();
-        public HashSet<string> CustomDerived { get; set; } = new HashSet<string>();
+        public HashSet<string> ArtisinalItemIds { get; set; } = new HashSet<string>();
     }
 
 }
