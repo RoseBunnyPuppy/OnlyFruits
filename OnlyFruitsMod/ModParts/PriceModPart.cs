@@ -165,7 +165,7 @@ namespace OnlyFruitsMod.ModParts
                     HardcodedInclusionReasons.Fruit => HardcodedInclusionReasonOrders.Fruit,
                     HardcodedInclusionReasons.ShouldBeFruit => HardcodedInclusionReasonOrders.ShouldBeFruit,
                     HardcodedInclusionReasons.Meme => HardcodedInclusionReasonOrders.Meme,
-                    HardcodedInclusionReasons.ForcedDerived => HardcodedInclusionReasonOrders.ForcedDerived,
+                    HardcodedInclusionReasons.ForcedArtisinal => HardcodedInclusionReasonOrders.ForcedDerived,
                     HardcodedInclusionReasons.Derived => HardcodedInclusionReasonOrders.Derived,
                     _ => 999,
                 };

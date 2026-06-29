@@ -5,7 +5,7 @@
         public const string Fruit = "fruit";
         public const string ShouldBeFruit = "should be fruit";
         public const string Meme = "meme";
-        public const string ForcedDerived = "forced-derived";
+        public const string ForcedArtisinal = "forced-artisinal";
         public const string Derived = "derived";
     }
     public static class HardcodedInclusionReasonOrders

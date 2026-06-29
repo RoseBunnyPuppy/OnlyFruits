@@ -8,7 +8,7 @@ namespace OnlyFruitsMod
         {
             return new ItemIdConfigModel
             {
-                CustomDerived = new HashSet<string>
+                ArtisinalItemIds = new HashSet<string>
                 {
                     // Jelly_Name
                     "344",
