@@ -45,10 +45,21 @@ For a few of the vanilla quests that have requirements that can either be a frui
 Many of these changes are configurable.  By default, every restriction is enabled.  But there is a mod UI available which allows enabling/disabling the various parts of the mod.
 
 ## Installing the mod
-The mod currently isn't available via any platform, but I plan on publishing it to a few soon.
-WARNING: this mod will make changes to any save file (e.g. reducing sale price, reducing rewards, etc.)  PLEASE make a backup of your world before using this mod.
+Before you can use this mod, please follow the instructions here:
+https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started
 
-I have designed it so that any changes can be reverted, but the way to do that is by changing some of the settings, then re-saving the world.  However the behavior isn't the most user-friendly right now.
+You'll need to do the following steps:
+- install SMAPI (NOTE: I compiled the mod using v4.5.2)
+- add GenericModConfigMenu (https://www.nexusmods.com/stardewvalley/mods/5098) to your `Mods/` folder
+
+Once those steps are done, you'll need to:
+- download the latest version of this mod from the [releases](https://github.com/RoseBunnyPuppy/OnlyFruits/releases) page.
+- extract the zip, and move the `OnlyFruitsMod` folder into your `Mods/` folder
+
+
+## Warnings
+WARNING: this mod will make changes to the active save file (e.g. reducing sale price, reducing rewards, etc.)  PLEASE make a backup of your world before using this mod.
+I have designed it so that changes can be reverted, but the way to do that is by changing some of the settings, then re-saving the world.  So it isn't the most user-friendly right now.
 
 ## For Developers
 ### Preparation
