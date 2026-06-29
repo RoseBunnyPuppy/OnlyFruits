@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace OnlyFruitsMod.Models
 {
+    [DebuggerDisplay("{ItemId,nq} {Count == null ? \"\" : Count,nq} ")]
+    public record ItemCountPair(string ItemId, string? Count = null);
+
     public class ParsedRecipe
     {
         public string[] Parts { get; set; }

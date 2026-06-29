@@ -4,7 +4,6 @@ using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Features.ReloadHelpers;
 using OnlyFruitsMod.Infrastructure;
-using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
 using Netcode;

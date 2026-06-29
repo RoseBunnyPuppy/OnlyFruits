@@ -1,4 +1,4 @@
-﻿namespace OnlyFruitsMod.Models
+﻿namespace OnlyFruitsMod.Features.Fruits
 {
     public class ItemIdConfigModel
     {

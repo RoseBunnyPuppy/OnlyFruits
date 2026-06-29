@@ -1,11 +1,10 @@
-﻿using OnlyFruitsMod.Features.Fruits;
-using OnlyFruitsMod.Features.ModConfiguration;
+﻿using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 using StardewModdingAPI;
 using StardewValley.GameData.Objects;
 
-namespace OnlyFruitsMod
+namespace OnlyFruitsMod.Features.Fruits
 {
     public enum InclusionReasons
     {
