@@ -12,7 +12,7 @@
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-no-nonfruity-shops.label": "Shops",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-no-nonfruity-shops.tooltip": "If enabled, shops will no longer buy non-fruity things from you. This does NOT impact what can be sold via the bin.",
   "rosebunnypuppy.onlyfruits.ui.other-section.label": "Other Settings",
-  "rosebunnypuppy.onlyfruits.ui.other-section.tooltip": "Configure other shit.",
+  "rosebunnypuppy.onlyfruits.ui.other-section.tooltip": "Configure other settings.",
   "rosebunnypuppy.onlyfruits.ui.other-section.option-restore-prices.label": "Restore Prices",
   "rosebunnypuppy.onlyfruits.ui.other-section.option-restore-prices.tooltip": "Attempt to apply the cached prices for all items.",
   "rosebunnypuppy.onlyfruits.ui.other-section.option-restore-quests.label": "Restore Quests",

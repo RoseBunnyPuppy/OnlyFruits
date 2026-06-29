@@ -1,5 +1,8 @@
 ﻿namespace OnlyFruitsMod.Features.UIHelpers
 {
+    /// <summary>
+    ///   Syntactic sugar to not have to explicitly specify the type in the generic.
+    /// </summary>
     public static class EnumChoiceMap
     {
         public static EnumChoiceMap<TEnum> Create<TEnum>(

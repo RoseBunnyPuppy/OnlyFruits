@@ -432,3 +432,4 @@ FodyWeavers.xsd
 /OnlyFruitsMod/_stardewtargets/*.stardewvalley.targets
 !/OnlyFruitsMod/_stardewtargets/example.stardewvalley.targets
 
+/.secrets/*

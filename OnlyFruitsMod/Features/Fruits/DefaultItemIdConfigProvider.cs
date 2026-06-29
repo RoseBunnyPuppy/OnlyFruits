@@ -1,6 +1,4 @@
-﻿using OnlyFruitsMod.Models;
-
-namespace OnlyFruitsMod
+﻿namespace OnlyFruitsMod.Features.Fruits
 {
     public static class DefaultItemIdConfigProvider
     {

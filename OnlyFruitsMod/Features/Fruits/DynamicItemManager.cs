@@ -1,13 +1,20 @@
-﻿using OnlyFruitsMod.Features.Fruits;
-using OnlyFruitsMod.Features.ModConfiguration;
+﻿using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 using StardewModdingAPI;
 using StardewValley.GameData.Objects;
 
-namespace OnlyFruitsMod
+namespace OnlyFruitsMod.Features.Fruits
 {
-    public record IdReasonPair(string id, string reason);
+    public enum InclusionReasons
+    {
+        Fruit = 0x10,
+        ShouldBeFruit = 0x15,
+        Meme = 0x30,
+        Artisnal = 0x80,
+        Derived = 0x90,
+    }
+    public record IdReasonPair(string Id, InclusionReasons Reason);
     public class DynamicItemManager
     {
         public bool Verbose { get; set; } = false;
@@ -43,9 +50,11 @@ namespace OnlyFruitsMod
         public bool IsFruityId(string itemId) => this.UniqueItemIds.Contains(itemId);
         public int Count => this.UniqueItemIds.Count;
 
-        public bool Add(string itemId, string reason)
+        public bool Add(string itemId, InclusionReasons reason)
         {
+            // dont add anything we've explicitly excluded
             if (this.IdConfigModel.ExplicitlyExcluded.Contains(itemId)) return false;
+            // do nothing if already included
             if (!this.UniqueItemIds.Add(itemId)) return false;
             this.ItemIdReasonPairs.Add(new(itemId, reason));
             return true;
@@ -78,14 +87,15 @@ namespace OnlyFruitsMod
             {
                 var preCount = this.Count;
                 var preItems = this.ItemIds.ToArray();
+                var allowedCategory = StardewValley.Object.FruitsCategory.ToString();
                 foreach (var recipe in recipeTracker.Recipes)
                 {
-                    var hasFruitCategory = recipe.Ingredients.Any(pair => pair.ItemId == HardcodedObjectIds.FruitsCategoryString);
+                    var hasFruitCategory = recipe.Ingredients.Any(pair => pair.ItemId == allowedCategory);
                     var hasFruitItem = recipe.Ingredients.Any(pair => this.IsFruityId(pair.ItemId));
 
                     if (!(hasFruitCategory || hasFruitItem)) continue;
 
-                    this.Add(recipe.Result.ItemId, HardcodedInclusionReasons.Derived);
+                    this.Add(recipe.Result.ItemId, InclusionReasons.Derived);
                 }
                 var addedItems = this.ItemIds.Except(preItems).ToArray();
                 if (addedItems.Any())
@@ -123,7 +133,7 @@ namespace OnlyFruitsMod
                     // skip fruits
                     if (itemData.Category == StardewValley.Object.FruitsCategory)
                     {
-                        this.Add(itemID, HardcodedInclusionReasons.Fruit);
+                        this.Add(itemID, InclusionReasons.Fruit);
                         continue;
                     }
                 }
@@ -138,7 +148,7 @@ namespace OnlyFruitsMod
                     // skip fruits
                     if (this.IdConfigModel.ArtisinalItemIds.Contains(itemID))
                     {
-                        this.Add(itemID, HardcodedInclusionReasons.ForcedArtisinal);
+                        this.Add(itemID, InclusionReasons.Artisnal);
                         continue;
                     }
                 }
@@ -152,7 +162,7 @@ namespace OnlyFruitsMod
                     // skip fruits
                     if (this.IdConfigModel.ShouldBeFruitItemIds.Contains(itemID))
                     {
-                        this.Add(itemID, HardcodedInclusionReasons.ShouldBeFruit);
+                        this.Add(itemID, InclusionReasons.ShouldBeFruit);
                         continue;
                     }
                 }
@@ -169,7 +179,7 @@ namespace OnlyFruitsMod
                     // skip fruits
                     if (this.IdConfigModel.MemeItemIds.Contains(itemID))
                     {
-                        this.Add(itemID, HardcodedInclusionReasons.Meme);
+                        this.Add(itemID, InclusionReasons.Meme);
                         continue;
                     }
                 }
