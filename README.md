@@ -8,7 +8,7 @@ The "Only Fruits" challenge run was created by CozyAndCaffeinated.  Please go su
 
 You can find a youtube playlist of the series here: https://www.youtube.com/watch?v=udju_3aAqQw&list=PLHZ9MvcxjqCXWM-FMpDtWZ9UUWY7U9x8A
 
-She came up with the challenge, all I've done is convert the ruleset into a mod.
+She came up with the challenge, all I've done is convert the ruleset into a mod.  I have NO affiliation with her, I am just a fan of their work.  Any views, phrasing, comments, statements, or opinions expressed within this mod are those of the individual who wrote them, and do not necessarily reflect the official policy, position, or opinions of CozyAndCaffeinated.
 
 ## What this mod does
 This mod makes a few changes to the way the game works.
