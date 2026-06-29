@@ -45,7 +45,30 @@ For a few of the vanilla quests that have requirements that can either be a frui
 Many of these changes are configurable.  By default, every restriction is enabled.  But there is a mod UI available which allows enabling/disabling the various parts of the mod.
 
 ## Installing the mod
-**IMPORTANT**: Make sure you have made a backup of your world before trying this mod: [Instructions](https://www.stardewvalleywiki.com/Saves#Find_your_save_files)
+**IMPORTANT**: This mod makes permanent changes to any save file you use it with. 
+
+### Installation via a Mod Manager
+I suggest you use a mod-manager such as nexusmod's `Vortex`, and set up a separate profile named `Only Fruits` which will have this mod (and any others you want along side it) enabled.  
+#### Adding to Vortex
+To add this mod to Vortex, download the zip file for latest version of this mod from the [releases](https://github.com/RoseBunnyPuppy/OnlyFruits/releases) page.  Then:
+- enable the custom profile
+- enable the `SMAPI` and `GenericModConfigMenu` within that profile
+- click `Install From File` and select the zip file with the Only Fruits release
+- click the `Deploy Mods` button, and press play!
+
+#### To disable the mod:
+When you are done trying this challenge:
+- switch to your normal profile
+- click the `Deploy Mods` button
+
+#### To re-enable the mod:
+When you want to try the challenge again:
+- switch back to the only fruits profile
+- click the `Deploy Mods` button
+
+### Manual Installation
+Simply opening a save is safe, the changes wont be persisted until you save (e.g. you sleep).  Please make sure you have made a backup of your worlds before trying this mod: [Instructions](https://www.stardewvalleywiki.com/Saves#Find_your_save_files)
+
 
 Before you can use this mod, please follow the [instructions here](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started)
 
@@ -59,7 +82,7 @@ Once those steps are done, you'll need to:
 
 
 ## Warnings
-**WARNING**: this mod will make changes to the active save file (e.g. reducing sale price, reducing rewards, etc.)  PLEASE make a backup of your world [instructions](https://www.stardewvalleywiki.com/Saves#Find_your_save_files) before using this mod.
+**WARNING**: this mod will make permanent changes to any save file you use it with (e.g. it reducing sale price, reducing rewards, etc.)  PLEASE make a backup of your worlds [instructions](https://www.stardewvalleywiki.com/Saves#Find_your_save_files) before using this mod.
 I have designed it so that changes can be reverted, but the way to do that is by changing some of the settings, then re-saving the world.  So it isn't the most user-friendly right now.
 
 ## For Developers
