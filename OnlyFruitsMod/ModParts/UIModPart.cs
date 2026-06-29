@@ -72,6 +72,10 @@ namespace OnlyFruitsMod.ModParts
                         save: () => this.configInstance.Save()
                     );
                 })
+                .AddParagraph(
+                    i18nKey: "rosebunnypuppy.onlyfruits.ui.version-string",
+                    tokens: new { ModVersion = this.ModManifest.Version }
+                )
                 // Sellable Configuration
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.sellable-section")
                 .AddBoolOption(

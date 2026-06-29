@@ -33,6 +33,51 @@ namespace OnlyFruitsMod.Features.UIHelpers
             action(this.configMenu);
             return this;
         }
+
+        /// <summary>
+        ///   Add a paragraph at the current position in the form.
+        /// </summary>
+        /// <param name="text">The paragraph text to display.</param>
+        public ConfigMenuHelper AddParagraph(Func<string> text)
+        {
+            this.configMenu.AddParagraph(
+                mod: this.ModManifest,
+                text
+            );
+            return this;
+        }
+
+        /// <summary>
+        ///   Add a paragraph at the current position in the form.
+        /// </summary>
+        /// <param name="i18nKeyName">The name of the i18n key to display</param>
+        public ConfigMenuHelper AddParagraph(string i18nKey)
+        {
+            this.configMenu.AddParagraph(
+                mod: this.ModManifest,
+                text: () => this.modHelper.Translation.Get(i18nKey)
+            );
+            return this;
+        }
+
+        /// <summary>
+        ///   Add a paragraph at the current position in the form.
+        /// </summary>
+        /// <param name="i18nKeyName">The name of the i18n key to display</param>
+        /// <param name="tokens">An object containing token key/value pairs. This can be an anonymous object (like <c>new { value = 42, name = "Cranberries" }</c>), a dictionary, or a class instance.</param>
+        public ConfigMenuHelper AddParagraph(
+            string i18nKey,
+            object? tokens
+        )
+        {
+            this.configMenu.AddParagraph(
+                mod: this.ModManifest,
+                text: () => this.modHelper.Translation.Get(i18nKey, tokens)
+            );
+            return this;
+        }
+
+
         /// <summary>
         ///   Add a section title at the current position in the form.
         /// </summary>
