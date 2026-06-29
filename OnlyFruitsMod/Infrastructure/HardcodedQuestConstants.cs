@@ -4,7 +4,6 @@
     {
         public static string Lewis { get; } = "Lewis";
         public static string Caroline { get; } = "Caroline";
-        public static string Clint { get; } = "Clint";
 
         public static class RandomizedElementNames
         {

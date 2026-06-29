@@ -114,7 +114,7 @@ namespace OnlyFruitsMod.Features.Quests
     
                     if (originalAmount == "{Crop:Price}")
                     {
-                        var preSelected = netFields.TryGetFieldByName<NetStringDictionary<string, NetString>>("SpecialOrder: preSelectedItems");
+                        var preSelected = netFields.TryGetFieldByName<NetStringDictionary<string, NetString>>(HardcodedNetFieldNames.PreSelectedItems);
 
                         if (preSelected == null || !preSelected.TryGetValue("Crop", out var cropString))
                             return false;

@@ -2,9 +2,14 @@
 {
     public static class PreloadConfiguration
     {
-        public static bool Shops { get; } = true;
-        public static bool MonsterSlayer { get; } = true;
-        public static bool Quests { get; } = true;
-        public static bool SpecialOrders { get; } = true;
+#if DEBUG
+        const bool DefaultPreloadValue = true;
+#else
+        const bool DefaultPreloadValue = false;
+#endif
+        public static bool Shops { get; } = DefaultPreloadValue;
+        public static bool MonsterSlayer { get; } = DefaultPreloadValue;
+        public static bool Quests { get; } = DefaultPreloadValue;
+        public static bool SpecialOrders { get; } = DefaultPreloadValue;
     }
 }

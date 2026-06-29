@@ -156,38 +156,26 @@ namespace OnlyFruitsMod.ModParts
             }
         }
 
+
         private void Summarize(IDictionary<string, ObjectData> data, DynamicItemManager manager)
         {
-            int GetSortOrder(string reason)
-            {
-                return reason switch
-                {
-                    HardcodedInclusionReasons.Fruit => HardcodedInclusionReasonOrders.Fruit,
-                    HardcodedInclusionReasons.ShouldBeFruit => HardcodedInclusionReasonOrders.ShouldBeFruit,
-                    HardcodedInclusionReasons.Meme => HardcodedInclusionReasonOrders.Meme,
-                    HardcodedInclusionReasons.ForcedArtisinal => HardcodedInclusionReasonOrders.ForcedDerived,
-                    HardcodedInclusionReasons.Derived => HardcodedInclusionReasonOrders.Derived,
-                    _ => 999,
-                };
-            }
 
             var summary = manager.FullItemIds.Select(pair => new
             {
-                itemId = pair.id,
-                pair.reason,
-                data[pair.id].Name,
-                data[pair.id].DisplayName,
+                itemId = pair.Id,
+                pair.Reason,
+                data[pair.Id].Name,
+                data[pair.Id].DisplayName,
             })
-            .OrderBy(x => GetSortOrder(x.reason))
-            .ThenBy(x => x.reason)
+            .OrderBy(x => x.Reason)
             .ThenBy(x => x.Name)
             .ToArray();
 
-            var orderedSummary = summary.Select((x, idx) => new { item = x, index = idx }).GroupBy(x => x.item.reason).Select(grp => new
+            var orderedSummary = summary.Select((x, idx) => new { item = x, index = idx }).GroupBy(x => x.item.Reason).Select(grp => new
             {
                 Reason = grp.Key,
                 Items = grp.OrderBy(x => x.index).Select(x => x.item).ToArray(),
-            }).OrderBy(pair => GetSortOrder(pair.Reason)).ToArray();
+            }).OrderBy(pair => pair.Reason).ToArray();
 
 
             foreach (var group in orderedSummary)
