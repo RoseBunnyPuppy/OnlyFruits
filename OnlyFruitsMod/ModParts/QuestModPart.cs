@@ -137,10 +137,9 @@ namespace OnlyFruitsMod.ModParts
         {
             // abort if we arent in a game
             if (!Game1.hasLoadedGame) return;
-            if (!this.Context.PerSaveChallengeInstance.HasPerSaveLoaded)
-            {
-                return;
-            }
+            
+            // do nothing if we dont currently have any per-save data
+            if (!this.Context.PerSaveChallengeInstance.HasPerSaveLoaded) return;
 
             var questData = this.CachedQuestData;
             if (questData == null) return;
