@@ -1,12 +1,4 @@
-﻿using StardewModdingAPI.Events;
-using StardewValley.GameData.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlyFruitsMod.Features.Fruits
+﻿namespace OnlyFruitsMod.Features.Fruits
 {
     
     public class RecipeTracker

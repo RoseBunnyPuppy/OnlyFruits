@@ -24,6 +24,9 @@ namespace OnlyFruitsMod.Features.ModConfiguration
         /// </summary>
         public event EventHandler? Changed;
 
+        /// <summary>
+        ///   Raised when the 'always ask about the challenge' status changes.
+        /// </summary>
         public event EventHandler? AlwaysAskAboutChallengeChanged;
 
 
