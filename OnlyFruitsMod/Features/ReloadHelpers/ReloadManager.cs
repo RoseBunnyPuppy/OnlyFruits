@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace OnlyFruitsMod.Features.ReloadHelpers
 {
-    public enum ReloadActions
-    {
-        Default = 0,
-        ReApply = 1,
-    }
+   
     public class ReloadManager
     {
-        public ReloadActions ReloadAction { get; set; } = ReloadActions.Default;
+        private enum ReloadActions
+        {
+            Default = 0,
+            ReApply = 1,
+        }
+        private ReloadActions ReloadAction { get; set; } = ReloadActions.Default;
 
         /// <summary>
         ///   Returns true if we need to reload the data.
