@@ -142,16 +142,12 @@ namespace OnlyFruitsMod.ModParts
 
         private bool RestoreReward(Quest quest, NetInt rewardField)
         {
-            // if there is a directly stored cached reward, apply it
-            if (quest.TryGetDirectlyCachedModDataQuestReward(out var directReward))
-            {
-                rewardField.Value = directReward;
-                return true;
-            }
+            // abort if there is no directly stored cached reward
+            if (!quest.TryGetDirectlyCachedModDataQuestReward(out var directReward)) return false;
 
-            // TODO: otherwise, try to apply the asset reward
-
-            return false;
+            // otherwise, apply the cached value
+            rewardField.Value = directReward;
+            return true;
 
         }
         private void SetOnlyFruitsQOTDStatus(Quest quest) =>
@@ -285,8 +281,6 @@ namespace OnlyFruitsMod.ModParts
                 return true;
             }
 
-
-            // TODO: here was where the quest had a null id ("Bring Haley Aquamarine.")
             // skip if the quest isnt known
             if (!questData.TryGetValue(quest.id.Value, out _)) return false;
 
