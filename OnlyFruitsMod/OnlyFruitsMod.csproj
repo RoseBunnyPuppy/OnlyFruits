@@ -6,6 +6,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DebugPublish;ReleasePublish</Configurations>
+	<DefineConstants Condition=" '$(Configuration)' == 'DebugPublish' ">DisableDevHelpers</DefineConstants>
+	<DefineConstants Condition=" '$(Configuration)' == 'ReleasePublish' ">DisableDevHelpers</DefineConstants>
   </PropertyGroup>
 	
   <ItemGroup>
