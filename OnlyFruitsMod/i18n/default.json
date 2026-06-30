@@ -50,7 +50,7 @@
   "rosebunnypuppy.onlyfruits.ui.challenge-section.option-always-ask-to-enable.label": "Always Ask Whether To Enable",
   "rosebunnypuppy.onlyfruits.ui.challenge-section.option-always-ask-to-enable.tooltip": "If checked, the question asking whether to enable the challenge will ALWAYS be asked.",
   "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-enabled.label": "Announce When Enabled",
-  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-enabled.tooltip": "If checked, a message will be shown on saves where this mod is enabled.",
+  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-enabled.tooltip": "If checked, a message will be shown on saves where this mod IS enabled.",
   "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled.label": "Announce When Disabled",
-  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled.tooltip": "If checked, a message will be shown on saves where this mod isn't enabled."
+  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled.tooltip": "If checked, a message will be shown on saves where this mod IS NOT enabled."
 }
