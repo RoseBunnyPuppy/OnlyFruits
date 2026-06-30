@@ -44,6 +44,9 @@ namespace OnlyFruitsMod.Features.Prices
             return lookups.TryGetValue(itemId, out price);
         }
 
+        /// <summary>
+        ///   Load the data asset for a given item type scope.
+        /// </summary>
         private bool LoadScope(string scope)
         {
             switch (scope)
