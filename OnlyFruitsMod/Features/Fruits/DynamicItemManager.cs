@@ -32,9 +32,6 @@ namespace OnlyFruitsMod.Features.Fruits
         Dictionary<string, ReasonPairCollection> ScopedUniqueItemIds { get; } = new();
         List<ScopedIdReasonPair> AllItems { get; } = new();
 
-        //public IEnumerable<string> ItemIds { get { return new List<string>(UniqueItemIds); } }
-        //public IEnumerable<IdReasonPair> FullItemIds { get { return new List<IdReasonPair>(this.ItemIdReasonPairs); } }
-
         public DynamicItemManager(
             ItemIdConfigModel idConfigModel,
             IMonitor monitor,
