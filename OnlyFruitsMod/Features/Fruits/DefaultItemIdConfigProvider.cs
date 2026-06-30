@@ -6,37 +6,37 @@
         {
             return new ItemIdConfigModel
             {
-                ArtisinalItemIds = new HashSet<string>
+                ArtisinalFullItemIds = new HashSet<string>
                 {
                     // Jelly_Name
-                    "344",
+                    "(O)344",
                     // Wine_Name
-                    "348",
+                    "(O)348",
                     // Raisins
-                    "Raisins",
+                    "(O)Raisins",
                     // Dried Fruit
-                    "DriedFruit",
+                    "(O)DriedFruit",
                 },
-                MemeItemIds = new()
+                MemeFullItemIds = new()
                 {
                     // CherryBomb_Name
-                    "286",
+                    "(O)286",
                 },
-                ShouldBeFruitItemIds = new()
+                ShouldBeFruitFullItemIds = new()
                 {
                     // Sweet Gem Berry
-                    "417",
+                    "(O)417",
                 },
-                ExplicitlyExcluded = new HashSet<string>
+                ExplicitlyExcludedFullItemIds = new()
                 {
                     // Summer Seeds
-                    "496",
+                    "(O)496",
                     // Fall Seeds
-                    "497",
+                    "(O)497",
                     // Winter Seeds
-                    "498",
+                    "(O)498",
                     // Warp Totem Desert
-                    "261",
+                    "(O)261",
                 },
             };
         }

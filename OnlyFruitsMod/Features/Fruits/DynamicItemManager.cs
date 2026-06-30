@@ -1,4 +1,5 @@
-﻿using OnlyFruitsMod.Features.ModConfiguration;
+﻿using OnlyFruitsMod.Features.ItemIds;
+using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 using StardewModdingAPI;
@@ -14,10 +15,12 @@ namespace OnlyFruitsMod.Features.Fruits
         Artisnal = 0x80,
         Derived = 0x90,
     }
-    public record IdReasonPair(string Id, InclusionReasons Reason);
+    public record IdReasonPair(string PartialId, InclusionReasons Reason);
     public class DynamicItemManager
     {
         public bool Verbose { get; set; } = false;
+
+
         private readonly IMonitor monitor;
         private readonly ModConfigInstance configInstance;
         public RecipeTracker CookingRecipes { get; } = new();
@@ -27,9 +30,10 @@ namespace OnlyFruitsMod.Features.Fruits
 
         public ItemIdConfigModel IdConfigModel { get; set; }
 
-        private record ReasonPairCollection(HashSet<string> UniqueIds, List<IdReasonPair> ReasonedItems);
+        private record ReasonPairCollection(HashSet<string> UniquePartialItemIds, List<IdReasonPair> ReasonedItems);
         private record ScopedIdReasonPair(string Scope, IdReasonPair ReasonPair);
-        Dictionary<string, ReasonPairCollection> ScopedUniqueItemIds { get; } = new();
+
+        Dictionary<string, ReasonPairCollection> ScopedUniquePartialItemIds { get; } = new();
         List<ScopedIdReasonPair> AllItems { get; } = new();
 
         public DynamicItemManager(
@@ -48,28 +52,28 @@ namespace OnlyFruitsMod.Features.Fruits
         /// </summary>
         public bool IsFruityId(string scope, string itemId)
         {
-            if (!this.ScopedUniqueItemIds.TryGetValue(scope, out var scopedItems)) return false;
-            return scopedItems.UniqueIds.Contains(itemId);
+            if (!this.ScopedUniquePartialItemIds.TryGetValue(scope, out var scopedItems)) return false;
+            return scopedItems.UniquePartialItemIds.Contains(itemId);
         }
 
         public int Count => this.AllItems.Count;
 
-        public bool Add(string scope, string itemId, InclusionReasons reason)
+        private bool AddFullItemId(ScopedItemId fullItemId, InclusionReasons reason)
         {
-            if (scope == ItemIdPrefixes.Objects)
-            {
-                // dont add anything we've explicitly excluded
-                if (this.IdConfigModel.ExplicitlyExcluded.Contains(itemId)) return false;
-            }
+            // dont add anything we've explicitly excluded
+            if (this.IdConfigModel.ExplicitlyExcludedFullItemIds.Contains(fullItemId.FullId)) return false;
+
+
             // do nothing if already included
-            if (!this.ScopedUniqueItemIds.TryGetValue(scope, out var scopedItems))
+            if (!this.ScopedUniquePartialItemIds.TryGetValue(fullItemId.Scope, out var scopedItems))
             {
-                this.ScopedUniqueItemIds[scope] = scopedItems = new(new(), new());
+                this.ScopedUniquePartialItemIds[fullItemId.Scope] = scopedItems = new(new(), new());
             }
-            if (!scopedItems.UniqueIds.Add(itemId)) return false;
-            IdReasonPair pair = new(itemId, reason);
+
+            if (!scopedItems.UniquePartialItemIds.Add(fullItemId.PartialId)) return false;
+            IdReasonPair pair = new(fullItemId.PartialId, reason);
             scopedItems.ReasonedItems.Add(pair);
-            this.AllItems.Add(new(scope, pair));
+            this.AllItems.Add(new(fullItemId.Scope, pair));
             return true;
         }
 
@@ -77,15 +81,16 @@ namespace OnlyFruitsMod.Features.Fruits
         public void Clear()
         {
             this.AllItems.Clear();
-            this.ScopedUniqueItemIds.Clear();
+            this.ScopedUniquePartialItemIds.Clear();
         }
 
         private IEnumerable<string> GetScopedItemIds(string scope)
         {
-            if (!this.ScopedUniqueItemIds.TryGetValue(scope, out var collection)) return Array.Empty<string>();
-            return collection.UniqueIds;
+            if (!this.ScopedUniquePartialItemIds.TryGetValue(scope, out var collection)) return Array.Empty<string>();
+            return collection.UniquePartialItemIds;
         }
-        public void ApplyAssetData(IDictionary<string, ObjectData> data)
+
+        public void ApplyObjectData(IDictionary<string, ObjectData> data)
         {
             string[] RunBatch(string label, Action action)
             {
@@ -113,7 +118,7 @@ namespace OnlyFruitsMod.Features.Fruits
 
                     if (!(hasFruitCategory || hasFruitItem)) continue;
 
-                    this.Add(ItemIdPrefixes.Objects, recipe.Result.ItemId, InclusionReasons.Derived);
+                    this.AddFullItemId(new(ItemIdPrefixes.Objects, recipe.Result.ItemId), InclusionReasons.Derived);
                 }
                 var addedItems = this.GetScopedItemIds(ItemIdPrefixes.Objects).Except(preItems).ToArray();
                 if (addedItems.Any())
@@ -151,7 +156,7 @@ namespace OnlyFruitsMod.Features.Fruits
                     // skip fruits
                     if (itemData.Category == StardewValley.Object.FruitsCategory)
                     {
-                        this.Add(ItemIdPrefixes.Objects, itemID, InclusionReasons.Fruit);
+                        this.AddFullItemId(new(ItemIdPrefixes.Objects, itemID), InclusionReasons.Fruit);
                         continue;
                     }
                 }
@@ -163,10 +168,11 @@ namespace OnlyFruitsMod.Features.Fruits
 
                 foreach ((string itemID, ObjectData itemData) in data)
                 {
+                    ScopedItemId fullItemId = new(ItemIdPrefixes.Objects, itemID);
                     // skip fruits
-                    if (this.IdConfigModel.ArtisinalItemIds.Contains(itemID))
+                    if (this.IdConfigModel.ArtisinalFullItemIds.Contains(fullItemId.FullId))
                     {
-                        this.Add(ItemIdPrefixes.Objects, itemID, InclusionReasons.Artisnal);
+                        this.AddFullItemId(fullItemId, InclusionReasons.Artisnal);
                         continue;
                     }
                 }
@@ -177,10 +183,11 @@ namespace OnlyFruitsMod.Features.Fruits
                 if (!this.Config.AllowSellingShouldaBeenFruitItems) return;
                 foreach ((string itemID, ObjectData itemData) in data)
                 {
+                    ScopedItemId fullItemId = new(ItemIdPrefixes.Objects, itemID);
                     // skip fruits
-                    if (this.IdConfigModel.ShouldBeFruitItemIds.Contains(itemID))
+                    if (this.IdConfigModel.ShouldBeFruitFullItemIds.Contains(fullItemId.FullId))
                     {
-                        this.Add(ItemIdPrefixes.Objects, itemID, InclusionReasons.ShouldBeFruit);
+                        this.AddFullItemId(fullItemId, InclusionReasons.ShouldBeFruit);
                         continue;
                     }
                 }
@@ -194,10 +201,11 @@ namespace OnlyFruitsMod.Features.Fruits
 
                 foreach ((string itemID, ObjectData itemData) in data)
                 {
+                    ScopedItemId fullItemId = new(ItemIdPrefixes.Objects, itemID);
                     // skip fruits
-                    if (this.IdConfigModel.MemeItemIds.Contains(itemID))
+                    if (this.IdConfigModel.MemeFullItemIds.Contains(fullItemId.FullId))
                     {
-                        this.Add(ItemIdPrefixes.Objects, itemID, InclusionReasons.Meme);
+                        this.AddFullItemId(fullItemId, InclusionReasons.Meme);
                         continue;
                     }
                 }

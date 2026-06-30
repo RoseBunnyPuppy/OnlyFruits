@@ -38,6 +38,15 @@ namespace OnlyFruitsMod.ModParts
     /// </summary>
     public class PriceModPart : ModPartBase
     {
+        const string DisabledCondition = "PLAYER_HAS_TRASH_CAN_LEVEL Current 3 3";
+        static string[] TrashCanToolPartialItemIds = new string[]
+        {
+                "CopperTrashCan",
+                "SteelTrashCan",
+                "GoldTrashCan",
+                "IridiumTrashCan",
+        };
+
         private ItemIdConfigModel IdConfigModel { get; set; } = DefaultItemIdConfigProvider.GetDefaults();
 
         public DynamicItemManager ItemManager { get; private set; }
@@ -178,30 +187,56 @@ namespace OnlyFruitsMod.ModParts
         /// <summary>
         ///   Constructs a dictionary with value 0 for each key.
         /// </summary>
-        private Dictionary<string, int> TreatAllAs0<T>(IDictionary<string, T> original) => original.ToDictionary(kvp => kvp.Key, kvp => 0);
-        protected override void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+        private Dictionary<string, int> TreatAllAs0<T>(IDictionary<string, T> original) => Create0ValuesForKeys(original.Keys);
+        
+        /// <summary>
+        ///   Constructs a dictionary with value 0 for each key.
+        /// </summary>
+        private Dictionary<string, int> Create0ValuesForKeys(IEnumerable<string> keys) => keys.ToDictionary(key => key, _ => 0);
+        
+        private bool TryHandleRecipeAsset(AssetRequestedEventArgs e)
         {
-            if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.CookingRecipes.Name))
+            if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.CookingRecipes))
             {
-                this.ItemManager.CookingRecipes.LoadFromAssetEvent(e);
-                return;
+                e.Edit(asset =>
+                {
+                    var recipeMap = asset.AsAutoDictionary(HardcodedAssetPaths.CookingRecipes).Data;
+                    this.ItemManager.CookingRecipes.LoadRecipeMap(recipeMap);
+                });
+                return true;
             }
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.CraftingRecipes))
             {
-                this.ItemManager.CraftingRecipes.LoadFromAssetEvent(e);
-                return;
+                e.Edit(asset =>
+                {
+                    var recipeMap = asset.AsAutoDictionary(HardcodedAssetPaths.CraftingRecipes).Data;
+                    this.ItemManager.CraftingRecipes.LoadRecipeMap(recipeMap);
+                });
+                return true;
             }
-            else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataBoots))
+            return false;
+        }
+        
+        private bool TryHandleItemDataAsset(AssetRequestedEventArgs e)
+        {
+            // wiki says can be sold to limited shops, and can get money via trashcan
+            if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataBoots))
             {
                 e.Edit(asset =>
                 {
                     var scope = ItemIdPrefixes.Boots;
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataBoots).Data;
-                    // 2 	Price 	Unused. The actual price is calculated as (added defence × 100) + (added immunity × 100). 
-                    _ = 23;
+                    /* 
+                     * The wiki says: 2 	Price 	Unused. The actual price is calculated as (added defence × 100) + (added immunity × 100). 
+                     * 
+                     *      Therefore, they dont have an overloadable price.  So we need to remove the ability to sell them to stores
+                     * as well as limiting the ability to have upgraded trashcans.
+                     */
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says not sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataFurniture))
             {
                 e.Edit(asset =>
@@ -211,7 +246,9 @@ namespace OnlyFruitsMod.ModParts
                     // The wiki says: Furniture cannot be sold through the Shipping Bin or to any merchant/shop, and cannot be gifted to villagers. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says not sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataHats))
             {
                 e.Edit(asset =>
@@ -221,7 +258,9 @@ namespace OnlyFruitsMod.ModParts
                     // The wiki says: Hats cannot be sold through the Shipping Bin, to the Hat Mouse, or to any store/shop in the game. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says not sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataMannequins))
             {
                 e.Edit(asset =>
@@ -231,7 +270,9 @@ namespace OnlyFruitsMod.ModParts
                     // The wiki says: Cannot be sold 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says not sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataPants))
             {
                 e.Edit(asset =>
@@ -241,7 +282,9 @@ namespace OnlyFruitsMod.ModParts
                     // The wiki says: Shirts, Pants, and Hats cannot be sold anywhere in Stardew Valley. Boots/Shoes can be sold to the Adventurer's Guild. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says not sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataShirts))
             {
                 e.Edit(asset =>
@@ -251,7 +294,9 @@ namespace OnlyFruitsMod.ModParts
                     // The wiki says: Shirts, Pants, and Hats cannot be sold anywhere in Stardew Valley. Boots/Shoes can be sold to the Adventurer's Guild. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says not sellable, but some items do require individual patching
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataTools))
             {
                 e.Edit(asset =>
@@ -262,17 +307,15 @@ namespace OnlyFruitsMod.ModParts
                     // we want to prevent trashcan upgrades when the challend is enabled
                     if (this.PreventTrashcanUpgrades())
                     {
-                        const string DisabledCondition = "PLAYER_HAS_TRASH_CAN_LEVEL Current 3 3";
-                        data["CopperTrashCan"].UpgradeFrom[0].Condition = DisabledCondition;
-                        data["SteelTrashCan"].UpgradeFrom[0].Condition = DisabledCondition;
-                        data["GoldTrashCan"].UpgradeFrom[0].Condition = DisabledCondition;
-                        data["IridiumTrashCan"].UpgradeFrom[0].Condition = DisabledCondition;
+                        this.PatchTrashCanAssets(data);
                     }
-                    
+
                     // it doesnt appear that we can sell tools
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says can be sold to limited shops, and can get money via trashcan
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataTrinkets))
             {
                 e.Edit(asset =>
@@ -282,18 +325,22 @@ namespace OnlyFruitsMod.ModParts
                     // every trinket seems to be sellable for 1000
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says not sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataAdditionalWallpaperFlooring))
             {
                 e.Edit(asset =>
                 {
                     var data = asset.GetData<List<ModWallpaperOrFlooring>>();
-                    
+
                     // unsure
-                    this.priceCache.SetPriceData(ItemIdPrefixes.Flooring, data.Where(x => x.IsFlooring).ToDictionary(item => item.Id, item => 0));
-                    this.priceCache.SetPriceData(ItemIdPrefixes.Wallpaper, data.Where(x => !x.IsFlooring).ToDictionary(item => item.Id, item => 0));
+                    this.priceCache.SetPriceData(ItemIdPrefixes.Flooring, Create0ValuesForKeys(data.Where(x => x.IsFlooring).Select(item => item.Id)));
+                    this.priceCache.SetPriceData(ItemIdPrefixes.Wallpaper, Create0ValuesForKeys(data.Where(x => !x.IsFlooring).Select(item => item.Id)));
                 });
+                return true;
             }
+            // wiki doesnt say if it is sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataWeapons))
             {
                 e.Edit(asset =>
@@ -303,55 +350,89 @@ namespace OnlyFruitsMod.ModParts
                     // every trinket seems to be sellable for 1000 (we prevent selling them via shop filters)
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
+                return true;
             }
+            // wiki says sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataBigCraftables))
             {
                 e.Edit(asset =>
                 {
                     var scope = ItemIdPrefixes.BigCraftables;
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataBigCraftables).Data;
-                    
+
                     //reset the price cache for the scope
                     this.priceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Price));
 
                     // set non-fruits to have a sale price of 0
-                    foreach (var (itemID, itemData) in data)
+                    foreach (var (partialItemId, itemData) in data)
                     {
                         itemData.Price = 0;
                     }
                 });
+                return true;
             }
+            // wiki says sellable
             else if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataObjects))
             {
                 e.Edit(asset =>
                 {
-                    
+
                     var scope = ItemIdPrefixes.Objects;
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataObjects).Data;
-                    
+
                     // reset the price cache
-                    this.priceCache.SetPriceData(scope, data);
+                    this.priceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Price));
 
                     // find items
-                    this.ItemManager.ApplyAssetData(data);
+                    this.ItemManager.ApplyObjectData(data);
 
                     // set non-fruits to have a sale price of 0
-                    foreach ((string itemID, ObjectData itemData) in data)
+                    foreach (var (partialItemId, itemData) in data)
                     {
-                        if (!this.ShouldPatchItem(scope, itemID)) continue;
+                        if (!this.ShouldPatchItem(scope, partialItemId)) continue;
                         itemData.Price = 0;
                     }
                 });
-
-
+                
                 // re-apply the live data changes if needed
                 if (this.reloadManager.ConsumeReload())
                 {
                     this.PatchLiveData();
                 }
+                return true;
+            }
+            return false;
+        }
+        protected override void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+        {
+            if (this.TryHandleRecipeAsset(e)) return;
+            else if (this.TryHandleItemDataAsset(e)) return;
+        }
+        
+        /// <summary>
+        ///   Prevent a hardcoded list of trashcans from being upgraded
+        /// </summary>
+        private void PatchTrashCanAssets(IDictionary<string, ToolData> toolDataMap)
+        {
+            foreach (var key in TrashCanToolPartialItemIds)
+            {
+
+                // skip if not found
+                if (!toolDataMap.TryGetValue(key, out var toolData))
+                {
+                    this.monitor.Log($"Failed to find trashcan named '{key}'", LogLevel.Error);
+                    continue;
+                }
+
+                foreach (var upgradeFrom in toolData.UpgradeFrom)
+                {
+                    if (upgradeFrom.Condition.StartsWith("PLAYER_HAS_TRASH_CAN_LEVEL"))
+                    {
+                        upgradeFrom.Condition = DisabledCondition;
+                    }
+                }
             }
         }
-
 
         #endregion "Asset Patching"
 
@@ -413,7 +494,7 @@ namespace OnlyFruitsMod.ModParts
         }
         private void PatchTrashCanLevel()
         {
-            if (!Game1.player.modData.TryGetValue(HardcodedModDataKeys.OriginalTrashCanDataKey, out var currentTrashCanLevel))
+            if (!Game1.player.modData.TryGetValue(HardcodedModDataKeys.OriginalTrashCanDataKey, out _))
             {
                 Game1.player.modData[HardcodedModDataKeys.OriginalTrashCanDataKey] = Game1.player.trashCanLevel.ToString();
             }

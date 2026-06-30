@@ -108,16 +108,5 @@ namespace OnlyFruitsMod.Features.Prices
                 scoped[kvp.Key] = kvp.Value;
             }
         }
-        public void SetPriceData(string scope, IDictionary<string, ObjectData> assetData)
-        {
-            this.Clear(scope);
-
-            var scoped = this.ScopedCachedPrices[scope] = new Dictionary<string, int>();
-            foreach (var kvp in assetData)
-            {
-                // cache the original price
-                scoped[kvp.Key] = kvp.Value.Price;
-            }
-        }
     }
 }
