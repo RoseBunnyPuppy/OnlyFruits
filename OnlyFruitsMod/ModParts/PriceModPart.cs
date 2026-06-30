@@ -71,11 +71,12 @@ namespace OnlyFruitsMod.ModParts
         protected override void AttachListeners()
         {
             base.AttachListeners();
+            helper.Events.Content.AssetReady += Content_AssetReady;
             helper.Events.GameLoop.SaveLoaded += GameLoop_SaveLoaded;
             helper.Events.Player.InventoryChanged += Player_InventoryChanged;
         }
 
-        
+
 
         /// <summary>
         ///     When the configuration changes, invalidate the assets
@@ -391,16 +392,24 @@ namespace OnlyFruitsMod.ModParts
                         itemData.Price = 0;
                     }
                 });
-                
+                return true;
+            }
+            return false;
+        }
+
+        private void Content_AssetReady(object? sender, AssetReadyEventArgs e)
+        {
+            if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataObjects))
+            {
+                this.monitor.LogAssetReady(this, e.NameWithoutLocale);
                 // re-apply the live data changes if needed
                 if (this.reloadManager.ConsumeReload())
                 {
                     this.PatchLiveData();
                 }
-                return true;
             }
-            return false;
         }
+
         protected override void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
         {
             if (this.TryHandleRecipeAsset(e)) return;
