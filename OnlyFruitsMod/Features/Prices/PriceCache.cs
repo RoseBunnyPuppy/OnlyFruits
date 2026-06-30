@@ -1,6 +1,7 @@
 ﻿using OnlyFruitsMod.Extensions;
 using OnlyFruitsMod.Infrastructure;
 using StardewModdingAPI;
+using StardewValley;
 using StardewValley.GameData.Objects;
 
 namespace OnlyFruitsMod.Features.Prices
@@ -18,17 +19,24 @@ namespace OnlyFruitsMod.Features.Prices
 
         public Dictionary<string, Dictionary<string, int>> ScopedCachedPrices { get; set; } = new Dictionary<string, Dictionary<string, int>>();
 
+        /// <summary>
+        ///   Remove cached prices for all scopes.
+        /// </summary>
         public void Clear()
         {
             this.ScopedCachedPrices.Clear();
         }
 
+        /// <summary>
+        ///   Remove cached prices for the given scope.
+        /// </summary>
         public void Clear(string scope)
         {
             this.ScopedCachedPrices.Remove(scope);
         }
 
-        public bool TryGetPrice(string scope, string itemId, out int price) => this.TryGetPriceFull(scope, itemId, out price, out _);
+        public bool TryGetPriceFull(Item item, out int price, out bool wasScopeKnown) => 
+            this.TryGetPriceFull(item.GetItemTypeId(), item.ItemId, out price, out wasScopeKnown);
 
         public bool TryGetPriceFull(string scope, string itemId, out int price, out bool wasScopeKnown)
         {

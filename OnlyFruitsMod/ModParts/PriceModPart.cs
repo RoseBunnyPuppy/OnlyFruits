@@ -347,7 +347,7 @@ namespace OnlyFruitsMod.ModParts
                 // re-apply the live data changes if needed
                 if (this.reloadManager.ConsumeReload())
                 {
-                    this.OverrideExistingItemPrices();
+                    this.PatchLiveData();
                 }
             }
         }
@@ -359,10 +359,10 @@ namespace OnlyFruitsMod.ModParts
 
         private void GameLoop_SaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
-            this.OverrideExistingItemPrices();
+            this.PatchLiveData();
         }
 
-        private void OverrideExistingItemPrices()
+        private void PatchLiveData()
         {
             // do nothing if no game is loaded
             if (!Game1.hasLoadedGame) return;
@@ -381,22 +381,26 @@ namespace OnlyFruitsMod.ModParts
                 this.RestoreTrashCanLevel();
             }
 
-            this.UpdateInventoryPrices(Game1.player.Items);
+            // patch the player's personal inventory
+            this.PatchInventoryItems(Game1.player.Items);
+
             foreach (GameLocation? location in Game1.locations)
             {
                 if (location == null) continue;
 
+                // patch the farmhouse
                 if (location is FarmHouse farmHouse)
                 {
-                    this.UpdateInventoryPrices(farmHouse.fridge.Value.Items);
+                    this.PatchInventoryItems(farmHouse.fridge.Value.Items);
                 }
 
 
-                foreach (var kvp in location.objects.Pairs)
+                // patch the placed chests
+                foreach (var pairKvp in location.objects.Pairs)
                 {
-                    if (kvp.Value is Chest chest)
+                    if (pairKvp.Value is Chest chest)
                     {
-                        this.UpdateInventoryPrices(chest.Items);
+                        this.PatchInventoryItems(chest.Items);
                     }
                 }
             }
@@ -415,47 +419,57 @@ namespace OnlyFruitsMod.ModParts
             }
             Game1.player.trashCanLevel = 0;
         }
+
+
         /// <summary>
-        ///   Store a cached 
+        ///   Store the current non-zero price to the item's moddata cache.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="priceField"></param>
         private void PatchPrice(Item item, NetInt priceField)
         {
+            // if there is no price set, do nothing
+            if (priceField.Value == 0) return;
+
             // set the directly cached item price (if not already set)
             item.TrySetCachedModDataPrice(priceField.Value);
 
             // clear the price
             priceField.Value = 0;
         }
+
+        /// <summary>
+        ///     Attempt to restore the price data for an item.
+        ///   Returns whether the item had or now has a price.
+        /// </summary>
         private bool RestorePrice(Item item, NetInt priceField)
         {
-            // if there is a directly stored cached price, apply it
+            // if there is alread a price set, do nothing
+            if (priceField.Value != 0) return true;
+
+            // if there is "original price data" directly stored on the item, use it
             if (item.TryGetDirectlyCachedModDataPrice(out var directPrice))
             {
                 priceField.Value = directPrice;
                 return true;
             }
 
-
-            // otherwise, try to apply the asset price
-            var itemScope = item.GetItemTypeId();
-            if (itemScope == ItemIdPrefixes.BigCraftables)
-                _ = 23;
-            if (this.priceCache.TryGetPriceFull(itemScope, item.ItemId, out var assetPrice, out var wasScopeKnown))
+            // if there is a cached price, use it
+            if (this.priceCache.TryGetPriceFull(item, out var assetPrice, out var wasScopeKnown))
             {
                 // dont update anything if the price is the same
                 if (priceField.Value == assetPrice) return true;
+                
+                // otherwise, use the cached price
                 priceField.Value = assetPrice;
                 return true;
             }
-            else if (wasScopeKnown) return false;
-            _ = 23;
 
             return false;
         }
 
-        private void UpdateItemPrice(Item item)
+        /// <summary>
+        ///   Apply needed patches to an item.
+        /// </summary>
+        private void PatchInventoryItem(Item item)
         {
             // find the 'item price' field
             var priceField = item.NetFields.TryGetFieldByName<NetInt>(HardcodedNetFieldNames.ItemPrice);
@@ -463,35 +477,28 @@ namespace OnlyFruitsMod.ModParts
             // do nothing if there is no 'item price' field
             if (priceField == null) return;
 
-            // get the current price
-            var curValue = priceField.Value;
-
             // if this is a patchable item, patch it
             if (this.ShouldPatchItem(item.GetItemTypeId(), item.ItemId))
             {
-                // if there is no price set, do nothing
-                if (curValue == 0) return;
-
                 this.PatchPrice(item, priceField);
                 return;
             }
+            // otherwise, restore the price data if needed
             else
             {
-                // if there is a price set, do nothing
-                if (curValue != 0) return;
                 this.RestorePrice(item, priceField);
             }
         }
 
         /// <summary>
-        ///   Update the prices for all items in the inventory.
+        ///   Apply needed patches to every item in the inventory.
         /// </summary>
-        private void UpdateInventoryPrices(StardewValley.Inventories.Inventory inventory)
+        private void PatchInventoryItems(StardewValley.Inventories.Inventory inventory)
         {
             foreach (var item in inventory)
             {
                 if (item == null) continue;
-                this.UpdateItemPrice(item);
+                this.PatchInventoryItem(item);
             }
         }
 
