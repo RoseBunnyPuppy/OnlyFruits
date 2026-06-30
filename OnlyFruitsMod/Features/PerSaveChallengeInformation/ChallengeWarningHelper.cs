@@ -32,44 +32,45 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
             this.dialogueMonitor = dialogueMonitor;
         }
         
-        private void EnqueueDialogueMessage(string message)
+        /// <summary>
+        ///     Enqueue or set the currently active clickable menu.
+        ///   Does NOT directly use the <see cref="DialogueMonitor"/>
+        /// </summary>
+        private void SetDialogueMessage(string message)
         {
-            var hasActive = this.dialogueMonitor.HasActiveDialogue;
-            var active = Game1.activeClickableMenu;
-            var next = Game1.nextClickableMenu;
             var dialogueBox = new DialogueBox(message);
+            // enqueue if there is an active or pending clickable menu
             if (Game1.activeClickableMenu != null || Game1.nextClickableMenu.Any())
             {
                 Game1.nextClickableMenu.Add(dialogueBox);
-                return;
             }
+            // otherwise, immediately display
             else
             {
                 Game1.activeClickableMenu = dialogueBox;
             }
         }
+        
         private void AnnounceChallengeIsEnabled()
         {
             string message = this.helper.Translation.Get("rosebunnypuppy.onlyfruits.ui.challenge-warning.enabled");
-            this.EnqueueDialogueMessage(message);
+            this.SetDialogueMessage(message);
         }
         private void AnnounceChallengeHasBeenFreshlyDisabled()
         {
             string message = this.helper.Translation.Get("rosebunnypuppy.onlyfruits.ui.challenge-warning.disabled_fresh");
-            this.EnqueueDialogueMessage(message);
+            this.SetDialogueMessage(message);
         }
         private void AnnounceChallengeIsDisabled()
         {
             string message = this.helper.Translation.Get("rosebunnypuppy.onlyfruits.ui.challenge-warning.disabled");
-            this.EnqueueDialogueMessage(message);
+            this.SetDialogueMessage(message);
         }
 
 
         private void SetEnabledStatus(bool status)
         {
-            var current = this.context.PerSaveChallengeInstance.Information ?? new PerSaveChallengeInformation();
-            if (current != this.context.PerSaveChallengeInstance.Information)
-                this.context.PerSaveChallengeInstance.Information = current;
+            var current = this.context.PerSaveChallengeInstance.GetOrCreateChallengeInformation();
             current.IsEnabled = status;
             this.context.ConfigInstance.RaiseChanged();
         }
@@ -77,8 +78,7 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
         public void AutoHandleChallengeStatus()
         {
             var statusInfo = this.helper.Data.ReadSaveData<OnlyFruitsChallengeStatusData>(OnlyFruitsChallengeStatusData.DataKey);
-
-
+            
             var status = statusInfo?.IsEnabled;
 
             if (status == null)
@@ -127,6 +127,9 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
             });
         }
 
+        /// <summary>
+        ///   Mark the challenge as being enabled or disabled 'at some point'.
+        /// </summary>
         private void WriteHasEverBeenEnabled(bool status)
         {
             this.helper.Data.WriteSaveData(OnlyFruitsChallengeEverEnableData.DataKey, new OnlyFruitsChallengeEverEnableData
@@ -134,12 +137,17 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
                 Status = status,
             });
         }
+
+        /// <summary>
+        ///   Mark the challenge as currently being enabled or disabled.
+        /// </summary>
         private void WriteIsCurrentlyEnabled(bool status)
         {
             this.helper.Data.WriteSaveData(OnlyFruitsChallengeStatusData.DataKey, new OnlyFruitsChallengeStatusData
             {
                 IsEnabled = status,
             });
+            this.SetEnabledStatus(status);
         }
 
         void ResponseHandler(Farmer who, string dialogueId)
@@ -148,18 +156,19 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
             {
                 case EnableChoice:
                 {
+                    // track that the challenge has _at some point_ been enabled.
                     this.WriteHasEverBeenEnabled(true);
+                    // track that the challenge is currently enabled.
                     this.WriteIsCurrentlyEnabled(true);
-                    
-                    this.SetEnabledStatus(true);
+                    // make any announcements
                     this.AnnounceChallengeIsEnabled();
                     return;
                 }
                 case DisableChoice:
                 {
-                    
+                    // track that the challenge is currently disabled.
                     this.WriteIsCurrentlyEnabled(false);
-                    this.SetEnabledStatus(false);
+                    // make any announcements
                     this.AnnounceChallengeHasBeenFreshlyDisabled();
                     return;
                 }

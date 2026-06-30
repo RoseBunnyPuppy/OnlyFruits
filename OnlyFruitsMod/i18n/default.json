@@ -26,7 +26,7 @@
   "rosebunnypuppy.onlyfruits.ui.questing-section.option-no-nonfruity-qi.label": "No non-fruity Qi",
   "rosebunnypuppy.onlyfruits.ui.questing-section.option-no-nonfruity-qi.tooltip": "If enabled, qi quests that dont have to do with fruits will be doable, but will not reward any gems.",
   "rosebunnypuppy.onlyfruits.ui.questing-section.option-no-nonfruity-monster-slayer.label": "No non-fruity eradication",
-  "rosebunnypuppy.onlyfruits.ui.questing-section.option-no-nonfruity-monster-slayer.tooltip": "If enabled, Monster Eradication Goals that dont have to do with fruits will be doable, but will not reward any money.",
+  "rosebunnypuppy.onlyfruits.ui.questing-section.option-no-nonfruity-monster-slayer.tooltip": "If enabled, Monster Eradication Goals that dont have to do with fruits (e.g. kill Pepper Rex) will be doable, but will not reward any money.",
   "rosebunnypuppy.onlyfruits.ui.quest-patching-section.label": "Quest Patching",
   "rosebunnypuppy.onlyfruits.ui.quest-patching-section.tooltip": "Configure specific quests that aren't fully fruity.",
   "rosebunnypuppy.onlyfruits.ui.quest-patching-section.option-lewis.label": "Lewis Quests",

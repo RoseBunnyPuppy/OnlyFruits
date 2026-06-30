@@ -11,7 +11,7 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
         /// <summary>
         ///   The current information.  Will be null if not in a save file.
         /// </summary>
-        public PerSaveChallengeInformation? Information { get; set; }
+        public PerSaveChallengeInformation? Information { get; private set; }
         
 
 
@@ -26,6 +26,7 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
         /// </summary>
         public bool IsChallengeEnabled => this.Information?.IsEnabled ?? false;
 
+
         public PerSaveChallengeInformationInstance(
             IModHelper helper
         )
@@ -33,7 +34,15 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
             this.helper = helper;
         }
 
-
+        public PerSaveChallengeInformation GetOrCreateChallengeInformation()
+        {
+            var output = this.Information;
+            if (output != null) return output;
+            output = new PerSaveChallengeInformation();
+            this.Information = output;
+            return output;
+        }
+        
         public void UnsetPerSaveInfo()
         {
             this.Information = null;
