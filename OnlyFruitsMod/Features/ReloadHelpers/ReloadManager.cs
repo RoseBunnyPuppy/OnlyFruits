@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace OnlyFruitsMod.Features.ReloadHelpers
    
     public class ReloadManager
     {
+
         private enum ReloadActions
         {
             Default = 0,
@@ -25,6 +27,8 @@ namespace OnlyFruitsMod.Features.ReloadHelpers
             this.ReloadAction = ReloadActions.Default;
             return true;
         }
+
+        public bool ShouldApplyLiveData => this.ReloadAction == ReloadActions.Default;
 
         /// <summary>
         ///   Mark the data as needing to be reloaded.

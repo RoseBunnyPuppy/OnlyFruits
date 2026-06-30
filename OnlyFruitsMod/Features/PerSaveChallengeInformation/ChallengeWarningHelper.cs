@@ -75,13 +75,13 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
             this.context.ConfigInstance.RaiseChanged();
         }
 
-        public void AutoHandleChallengeStatus()
+        public void AutoHandleChallengeStatus(bool force = false)
         {
             var statusInfo = this.helper.Data.ReadSaveData<OnlyFruitsChallengeStatusData>(OnlyFruitsChallengeStatusData.DataKey);
             
             var status = statusInfo?.IsEnabled;
 
-            if (status == null)
+            if (force || status == null)
             {
                 this.AskIfTheChallengeShouldBeEnabled();
                 return;

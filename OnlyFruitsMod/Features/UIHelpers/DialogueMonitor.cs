@@ -80,7 +80,7 @@ namespace OnlyFruitsMod.Features.UIHelpers
                     continue;
                 }
 
-                this.Context.Monitor.Log($"Starting!", LogLevel.Debug);
+                //this.Context.Monitor.Log($"Starting!", LogLevel.Debug);
                 nextPending.Action?.Invoke();
                 this.Cleanup(nextPending.ActionId);
             }
