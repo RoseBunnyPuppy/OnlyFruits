@@ -83,13 +83,11 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
 
             if (status == null)
             {
-                this.context.Monitor.Log($"The 'enable challenge' question was never asked.  Asking now.", LogLevel.Debug);
                 this.AskIfTheChallengeShouldBeEnabled();
                 return;
             }
             else if (this.configInstance.Config.AlwaysAskWhetherToUseChallenge)
             {
-                this.context.Monitor.Log($"The 'always ask' setting is true.  Asking now.", LogLevel.Debug);
                 this.AskIfTheChallengeShouldBeEnabled();
                 return;
             }

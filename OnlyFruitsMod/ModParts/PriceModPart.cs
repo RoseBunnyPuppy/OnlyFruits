@@ -40,7 +40,6 @@ namespace OnlyFruitsMod.ModParts
     public class PriceModPart : ModPartBase
     {
         private ItemIdConfigModel IdConfigModel { get; set; } = DefaultItemIdConfigProvider.GetDefaults();
-        public bool Verbose { get; set; } = false;
 
         public DynamicItemManager ItemManager { get; private set; }
 
@@ -341,7 +340,6 @@ namespace OnlyFruitsMod.ModParts
                     foreach ((string itemID, ObjectData itemData) in data)
                     {
                         if (!this.ShouldPatchItem(scope, itemID)) continue;
-                        if (this.Verbose) this.monitor.Log($"Preventing sale of asset: {e.Name} ({scope}{itemID}): {JsonConvert.SerializeObject(e, Formatting.Indented)}.", LogLevel.Debug);
                         itemData.Price = 0;
                     }
                 });

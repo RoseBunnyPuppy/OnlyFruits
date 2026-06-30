@@ -51,7 +51,6 @@ namespace OnlyFruitsMod.ModParts
         {
             if (!Game1.hasLoadedGame) return;
             else if (!this.Context.ConfigInstance.Config.AlwaysAskWhetherToUseChallenge) return;
-            this.monitor.Log($"The 'Always ask' status changed to true, asking whether to save", LogLevel.Debug);
             this.challengeWarningHelper.AutoHandleChallengeStatus();
         }
 
