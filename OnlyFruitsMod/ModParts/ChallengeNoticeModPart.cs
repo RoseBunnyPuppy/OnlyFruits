@@ -30,11 +30,15 @@ namespace OnlyFruitsMod.ModParts
 
         protected override void AttachListeners()
         {
+#if !DisableDevHelpers
             helper.Events.Input.ButtonReleased += Input_ButtonReleased;
+#endif
             helper.Events.GameLoop.SaveLoaded += GameLoop_SaveLoaded;
             helper.Events.GameLoop.ReturnedToTitle += GameLoop_ReturnedToTitle;
             this.Context.ConfigInstance.AlwaysAskAboutChallengeChanged += ConfigInstance_AlwaysAskAboutChallengeChanged; ;
         }
+#if !DisableDevHelpers
+
         private void Input_ButtonReleased(object? sender, ButtonReleasedEventArgs e)
         {
             if (e.Button == SButton.F7)
@@ -45,6 +49,7 @@ namespace OnlyFruitsMod.ModParts
                 this.challengeWarningHelper.AutoHandleChallengeStatus(force: true);
             }
         }
+#endif
         /// <summary>
         ///   Clear the per-save info when the player goes from 'within a game' to title.
         /// </summary>
