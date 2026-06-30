@@ -10,7 +10,6 @@ using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
 using Netcode;
-using Newtonsoft.Json.Linq;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -244,11 +243,11 @@ namespace OnlyFruitsMod.ModParts
 
         private void OverrideQuestRewards()
         {
+            // abort if we arent in a game
             if (!Game1.hasLoadedGame) return;
-            if (!this.Context.PerSaveChallengeInstance.HasPerSaveLoaded)
-            {
-                return;
-            }
+
+            // do nothing if we dont currently have any per-save data
+            if (!this.Context.PerSaveChallengeInstance.HasPerSaveLoaded) return;
 
             var specialOrders = Game1.player.team.specialOrders;
 

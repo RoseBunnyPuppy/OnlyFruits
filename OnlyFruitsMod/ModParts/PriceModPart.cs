@@ -1,5 +1,4 @@
 ﻿using Netcode;
-using Newtonsoft.Json;
 using OnlyFruitsMod.Extensions;
 using OnlyFruitsMod.Features.Fruits;
 using OnlyFruitsMod.Features.ModConfiguration;
