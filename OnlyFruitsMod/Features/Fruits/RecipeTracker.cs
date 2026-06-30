@@ -1,5 +1,4 @@
-﻿using OnlyFruitsMod.Models;
-using StardewModdingAPI.Events;
+﻿using StardewModdingAPI.Events;
 using StardewValley.GameData.Objects;
 using System;
 using System.Collections.Generic;

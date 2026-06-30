@@ -18,7 +18,6 @@ namespace OnlyFruitsMod.ModParts
         public IManifest ModManifest => this.Context.ModManifest;
 
         private readonly DialogueMonitor dialogueMonitor;
-        private bool previousAlwaysAskStatus = false;
 
 
         public ChallengeNoticeModPart(
@@ -41,10 +40,7 @@ namespace OnlyFruitsMod.ModParts
 
         private void GameLoop_ReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
         {
-            var hlg = Game1.hasLoadedGame;
-            var oldInfo = this.Context.PerSaveChallengeInstance.Information;
             this.Context.PerSaveChallengeInstance.UnsetPerSaveInfo();
-            _ = 23;
         }
 
         private void ConfigInstance_AlwaysAskAboutChallengeChanged(object? sender, EventArgs e)

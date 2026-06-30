@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Netcode;
 using OnlyFruitsMod.Extensions;
 using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Infrastructure;
-using Netcode;
 using StardewValley;
 using StardewValley.GameData.Objects;
 using StardewValley.GameData.SpecialOrders;
@@ -10,6 +10,7 @@ using StardewValley.Network;
 using StardewValley.SpecialOrders;
 using StardewValley.SpecialOrders.Rewards;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OnlyFruitsMod.Features.Quests
 {
@@ -62,14 +63,17 @@ namespace OnlyFruitsMod.Features.Quests
             var strValue = match.Data[AmountKey];
             return int.TryParse(strValue, out amount);
         }
-        private bool TryGetDataMoneyRewardAmount(SpecialOrderData data, out string strAmount)
+        private bool TryGetDataMoneyRewardAmount(
+            SpecialOrderData data,
+            [NotNullWhen(returnValue: true)] out string? strAmount
+        )
         {
             const string AmountKey = "Amount";
             var moneyRewards = data.Rewards.Where(x => x.Type == HardcodedQuestConstants.RewardTypes.Money).ToArray();
             var match = moneyRewards.Where(x => x.Data.ContainsKey(AmountKey)).FirstOrDefault();
             if (match == null)
             {
-                strAmount = string.Empty;
+                strAmount = default;
                 return false;
             }
             strAmount = match.Data[AmountKey];
@@ -169,7 +173,7 @@ namespace OnlyFruitsMod.Features.Quests
             return false;
         }
         
-        public void SetMoneyRewardToZero(string questId, SpecialOrderData specialOrder)
+        public void SetMoneyRewardToZero(SpecialOrderData specialOrder)
         {
             var moneyRewards = specialOrder.Rewards.Where(x => x.Type == HardcodedQuestConstants.RewardTypes.Money).ToArray();
             foreach (var reward in moneyRewards)

@@ -34,11 +34,15 @@ namespace OnlyFruitsMod.Features.ItemIds
             itemId = match.Groups[2].Value;
             return true;
         }
-        public bool TryStripPrefix(string value, string prefix, out string cleaned)
+        public bool TryStripPrefix(
+            string value, 
+            string prefix,
+            [NotNullWhen(returnValue: true)] out string? cleaned
+        )
         {
             if (!value.StartsWith(prefix))
             {
-                cleaned = string.Empty;
+                cleaned = default;
                 return false;
             }
             cleaned = value[prefix.Length..];

@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace OnlyFruitsMod.ModParts.Models
 {
+    /// <summary>
+    ///   Holds models/objects/stuff commonly used by the various parts of this mod.
+    /// </summary>
     public record ModPartContext(
         IModHelper Helper,
         IMonitor Monitor,

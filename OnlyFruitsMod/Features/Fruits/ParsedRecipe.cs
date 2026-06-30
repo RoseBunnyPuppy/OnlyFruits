@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlyFruitsMod.Models
+namespace OnlyFruitsMod.Features.Fruits
 {
 
     /// <summary>
