@@ -5,11 +5,11 @@ using StardewValley.GameData.Objects;
 
 namespace OnlyFruitsMod.Features.Prices
 {
-    public class PriceCacheV2
+    public class PriceCache
     {
         private readonly IModHelper helper;
 
-        public PriceCacheV2(
+        public PriceCache(
             IModHelper helper
         )
         {

@@ -46,7 +46,7 @@ namespace OnlyFruitsMod.ModParts
 
         private readonly ReloadManager reloadManager = new();
 
-        private readonly PriceCacheV2 priceCache;
+        private readonly PriceCache priceCache;
 
         public PriceModPart(
             ModPartContext context
