@@ -1,6 +1,7 @@
 ﻿using Netcode;
 using OnlyFruitsMod.Extensions;
 using OnlyFruitsMod.Features.Fruits;
+using OnlyFruitsMod.Features.ItemIds;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Features.ReloadHelpers;
@@ -31,23 +32,14 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace OnlyFruitsMod.ModParts
 {
-
-    
     /// <summary>
     ///   The price changing code
     /// </summary>
     public class PriceModPart : ModPartBase
     {
         const string DisabledCondition = "PLAYER_HAS_TRASH_CAN_LEVEL Current 3 3";
-        static string[] TrashCanToolPartialItemIds = new string[]
-        {
-                "CopperTrashCan",
-                "SteelTrashCan",
-                "GoldTrashCan",
-                "IridiumTrashCan",
-        };
-
-        private ItemIdConfigModel IdConfigModel { get; set; } = DefaultItemIdConfigProvider.GetDefaults();
+        private TrashCanToolListConfigModel TrashCansToPatch { get; set; } 
+        private ItemIdConfigModel IdConfigModel { get; set; }
 
         public DynamicItemManager ItemManager { get; private set; }
 
@@ -62,6 +54,12 @@ namespace OnlyFruitsMod.ModParts
             this.priceCache =  new(
                 this.helper
             );
+            
+            // load config definition assets
+            this.IdConfigModel = this.helper.ModContent.Load<ItemIdConfigModel>("assets/fruity_item_ids.json");
+            this.TrashCansToPatch = this.helper.ModContent.Load<TrashCanToolListConfigModel>("assets/trashcan_ids.json");
+
+            // 
             this.ItemManager = new DynamicItemManager(
                 this.IdConfigModel,
                 this.monitor,
@@ -414,16 +412,12 @@ namespace OnlyFruitsMod.ModParts
         /// </summary>
         private void PatchTrashCanAssets(IDictionary<string, ToolData> toolDataMap)
         {
-            foreach (var key in TrashCanToolPartialItemIds)
+            foreach (var (key, toolData) in toolDataMap)
             {
+                // skip if not a trash can item
+                if (!this.TrashCansToPatch.TrashcanToolPartialIds.Contains(key)) continue;
 
-                // skip if not found
-                if (!toolDataMap.TryGetValue(key, out var toolData))
-                {
-                    this.monitor.Log($"Failed to find trashcan named '{key}'", LogLevel.Error);
-                    continue;
-                }
-
+                // patch the upgrade-from conditions
                 foreach (var upgradeFrom in toolData.UpgradeFrom)
                 {
                     if (upgradeFrom.Condition.StartsWith("PLAYER_HAS_TRASH_CAN_LEVEL"))

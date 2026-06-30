@@ -1,6 +1,8 @@
 ﻿using Force.DeepCloner;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
+using Netcode;
 using OnlyFruitsMod.Extensions;
+using OnlyFruitsMod.Features.Fruits;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Quests;
 using OnlyFruitsMod.Features.Quests.Models;
@@ -9,7 +11,6 @@ using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
-using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -31,7 +32,7 @@ namespace OnlyFruitsMod.ModParts
         private readonly ReloadManager reloadManager = new();
         private readonly SpecialOrderStatusDeterminer questPatchStatusHelper;
 
-        public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; } = DefaultSpecialOrderKeysProvider.Create();
+        public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; set; }
 
         /// <summary>
         ///   The cached version of the SpecialOrderStrings.
@@ -41,12 +42,14 @@ namespace OnlyFruitsMod.ModParts
         private readonly LewisCropRemapper lewisCropRemapper = new();
         private record SpecialOrderReward(SpecialOrderData SpecialOrder, SpecialOrderRewardData RewardData);
 
-        static Regex RexTextMatch = new Regex("\\[([^\\]]+)\\]", RegexOptions.Compiled);
-
         public SpecialOrderModPart(
             ModPartContext context
         ) : base(context)
         {
+            // load config definition assets
+            this.SpecialOrderKeysConfigModel = this.helper.ModContent.Load<SpecialOrderKeysConfigModel>("assets/fruity_special_order_keys.json");
+
+            // 
             this.questPatchStatusHelper = new SpecialOrderStatusDeterminer(
                 configInstance, 
                 this.SpecialOrderKeysConfigModel,

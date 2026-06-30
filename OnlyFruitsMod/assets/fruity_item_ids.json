@@ -1,0 +1,20 @@
+﻿{
+  "MemeFullItemIds": [
+    "(O)286"
+  ],
+  "ArtisinalFullItemIds": [
+    "(O)344",
+    "(O)348",
+    "(O)Raisins",
+    "(O)DriedFruit"
+  ],
+  "ShouldBeFruitFullItemIds": [
+    "(O)417"
+  ],
+  "ExplicitlyExcludedFullItemIds": [
+    "(O)496",
+    "(O)497",
+    "(O)498",
+    "(O)261"
+  ]
+}

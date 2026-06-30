@@ -1,0 +1,35 @@
+﻿{
+  "AlwaysDisabledQi": [
+    "QiChallenge3",
+    "QiChallenge4",
+    "QiChallenge5",
+    "QiChallenge8",
+    "QiChallenge9",
+    "QiChallenge10",
+    "QiChallenge12"
+  ],
+  "PotentiallyDisabledQi": [
+    "QiChallenge6",
+    "QiChallenge7"
+  ],
+  "AlwaysResetMoney": [
+    "Willy",
+    "Clint",
+    "Pierre",
+    "Robin",
+    "Emily",
+    "Demetrius",
+    "Demetrius2",
+    "Gus",
+    "Wizard",
+    "Evelyn",
+    "Linus",
+    "Wizard2",
+    "Gunther",
+    "Robin2",
+    "DesertFestivalMarlon1",
+    "DesertFestivalMarlon2",
+    "DesertFestivalMarlon3",
+    "Willy2"
+  ]
+}
