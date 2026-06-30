@@ -61,8 +61,10 @@ namespace OnlyFruitsMod.ModParts
         protected override void AttachListeners()
         {
             base.AttachListeners();
+            helper.Events.Content.AssetReady += Content_AssetReady;
             helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
         }
+
 
         /// <inheritdoc/>
         protected override void LoadNeededAssets()
@@ -119,6 +121,19 @@ namespace OnlyFruitsMod.ModParts
                     return;
             }
         }
+
+        private void Content_AssetReady(object? sender, AssetReadyEventArgs e)
+        {
+            if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataSpecialOrders))
+            {
+                this.monitor.LogAssetReady(this, e.NameWithoutLocale);
+                // re-apply the live data changes if needed
+                if (this.reloadManager.ConsumeReload())
+                {
+                    this.OverrideQuestRewards();
+                }
+            }
+        }
         protected override void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
         {
             if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataSpecialOrders))
@@ -131,11 +146,7 @@ namespace OnlyFruitsMod.ModParts
                         var flavor = this.questPatchStatusHelper.GetPatchingFlavor(questId);
                         this.PatchAsset(specialOperationData, flavor);
                     }
-                    // re-apply the live data changes if needed
-                    if (this.reloadManager.ConsumeReload())
-                    {
-                        this.OverrideQuestRewards();
-                    }
+                   
                 });
                
             }
