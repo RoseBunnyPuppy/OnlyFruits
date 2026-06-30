@@ -3,7 +3,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
-namespace OnlyFruitsMod.Features.Dialogue
+namespace OnlyFruitsMod.Features.UIHelpers
 {
     public class DialogueMonitor
     {

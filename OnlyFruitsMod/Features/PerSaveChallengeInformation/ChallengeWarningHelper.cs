@@ -1,5 +1,5 @@
-﻿using OnlyFruitsMod.Features.Dialogue;
-using OnlyFruitsMod.Features.ModConfiguration;
+﻿using OnlyFruitsMod.Features.ModConfiguration;
+using OnlyFruitsMod.Features.UIHelpers;
 using OnlyFruitsMod.Models.GameData;
 using OnlyFruitsMod.ModParts;
 using OnlyFruitsMod.ModParts.Models;

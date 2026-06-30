@@ -38,7 +38,7 @@ namespace OnlyFruitsMod.ModParts
     public class PriceModPart : ModPartBase
     {
         const string DisabledCondition = "PLAYER_HAS_TRASH_CAN_LEVEL Current 3 3";
-        private TrashCanToolListConfigModel TrashCansToPatch { get; set; } 
+        private HashSet<string> TrashCanPartialIds { get; } 
         private ItemIdConfigModel IdConfigModel { get; set; }
 
         public DynamicItemManager ItemManager { get; private set; }
@@ -57,7 +57,7 @@ namespace OnlyFruitsMod.ModParts
             
             // load config definition assets
             this.IdConfigModel = this.helper.ModContent.Load<ItemIdConfigModel>("assets/fruity_item_ids.json");
-            this.TrashCansToPatch = this.helper.ModContent.Load<TrashCanToolListConfigModel>("assets/trashcan_ids.json");
+            this.TrashCanPartialIds = this.helper.ModContent.Load<string[]>("assets/trashcan_tool_ids.json").ToHashSet();
 
             // 
             this.ItemManager = new DynamicItemManager(
@@ -415,7 +415,7 @@ namespace OnlyFruitsMod.ModParts
             foreach (var (key, toolData) in toolDataMap)
             {
                 // skip if not a trash can item
-                if (!this.TrashCansToPatch.TrashcanToolPartialIds.Contains(key)) continue;
+                if (!this.TrashCanPartialIds.Contains(key)) continue;
 
                 // patch the upgrade-from conditions
                 foreach (var upgradeFrom in toolData.UpgradeFrom)

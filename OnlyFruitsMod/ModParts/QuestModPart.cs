@@ -1,11 +1,12 @@
-﻿using OnlyFruitsMod.Extensions;
+﻿using Netcode;
+using OnlyFruitsMod.Extensions;
+using OnlyFruitsMod.Features.Fruits;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.ReloadHelpers;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
-using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -21,20 +22,13 @@ namespace OnlyFruitsMod.ModParts
         private readonly ReloadManager reloadManager = new();
         public bool PreloadAssets { get; set; } = PreloadConfiguration.Quests;
         public IDictionary<string, string>? CachedQuestData { get; private set; }
-        private static HashSet<string> FruityQuestIds { get; } = new HashSet<string>
-        {
-            "104",
-            "105",
-            "115",
-            "119",
-            "125",
-        };
+        private HashSet<string> FruityQuestIds { get; }
 
         public QuestModPart(
             ModPartContext context
         ) : base(context)
         {
-
+            this.FruityQuestIds = this.helper.ModContent.Load<string[]>("assets/fruity_quest_ids.json").ToHashSet();
         }
 
         private bool IsPatchingQuest(string questId)

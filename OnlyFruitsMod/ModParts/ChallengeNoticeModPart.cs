@@ -1,5 +1,5 @@
-﻿using OnlyFruitsMod.Features.Dialogue;
-using OnlyFruitsMod.Features.PerSaveChallengeInformation;
+﻿using OnlyFruitsMod.Features.PerSaveChallengeInformation;
+using OnlyFruitsMod.Features.UIHelpers;
 using OnlyFruitsMod.Models.GameData;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;

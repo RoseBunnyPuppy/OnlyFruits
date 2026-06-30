@@ -32,7 +32,7 @@ namespace OnlyFruitsMod.ModParts
         private readonly ReloadManager reloadManager = new();
         private readonly SpecialOrderStatusDeterminer questPatchStatusHelper;
 
-        public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; set; }
+        public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; }
 
         /// <summary>
         ///   The cached version of the SpecialOrderStrings.

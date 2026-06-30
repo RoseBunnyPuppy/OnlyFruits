@@ -1,19 +1,10 @@
-﻿using OnlyFruitsMod.Features.ModConfiguration;
-using OnlyFruitsMod.Features.UIHelpers;
-using OnlyFruitsMod.Infrastructure;
+﻿using OnlyFruitsMod.Features.UIHelpers;
 using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Integrations.GenericModConfigMenu;
-using StardewValley.Triggers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlyFruitsMod.ModParts
 {
