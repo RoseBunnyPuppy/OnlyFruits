@@ -7,7 +7,6 @@ using OnlyFruitsMod.ModParts.Models;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Integrations.GenericModConfigMenu;
-using StardewValley;
 using StardewValley.Triggers;
 using System;
 using System.Collections.Generic;
@@ -36,7 +35,7 @@ namespace OnlyFruitsMod.ModParts
 
         protected override void AttachListeners()
         {
-            helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched; ;
+            helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
         }
 
 
@@ -146,7 +145,28 @@ namespace OnlyFruitsMod.ModParts
                     getValue: () => configInstance.Config.RestoreAllQuestRewards,
                     setValue: value => configInstance.Config.RestoreAllQuestRewards = value
                 )
-                
+                .AddBoolOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.other-section.option-allow-trashcan-upgrades",
+                    getValue: () => configInstance.Config.AllowTrashcanUpgrade,
+                    setValue: value => configInstance.Config.AllowTrashcanUpgrade = value
+                )
+                .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.challenge-section")
+                .AddBoolOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.challenge-section.option-always-ask-to-enable",
+                    getValue: () => configInstance.Config.AlwaysAskWhetherToUseChallenge,
+                    setValue: value => configInstance.Config.AlwaysAskWhetherToUseChallenge = value
+                )
+                .AddBoolOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-enabled",
+                    getValue: () => configInstance.Config.AnnounceWhenChallengeIsEnabled,
+                    setValue: value => configInstance.Config.AnnounceWhenChallengeIsEnabled = value
+                )
+                .AddBoolOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled",
+                    getValue: () => configInstance.Config.AnnounceWhenChallengeIsDisabled,
+                    setValue: value => configInstance.Config.AnnounceWhenChallengeIsDisabled = value
+                )
+
             ;
         }
 

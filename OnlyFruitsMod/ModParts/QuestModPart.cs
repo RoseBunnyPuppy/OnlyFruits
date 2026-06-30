@@ -39,6 +39,9 @@ namespace OnlyFruitsMod.ModParts
 
         private bool IsPatchingQuest(string questId)
         {
+            // dont patch if the challenge isnt enabled.
+            if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
+
             // dont patch if we are restoring the quest rewards
             if (this.configInstance.Config.RestoreAllQuestRewards) return false;
 
@@ -63,7 +66,7 @@ namespace OnlyFruitsMod.ModParts
         /// </summary>
         protected override void OnModConfigChanged(object? sender, EventArgs e)
         {
-            this.reloadManager.ReloadAction = ReloadActions.ReApply;
+            this.reloadManager.EnqueueReload();
             this.helper.GameContent.InvalidateCache(HardcodedAssetPaths.DataQuests);
         }
 
@@ -134,6 +137,11 @@ namespace OnlyFruitsMod.ModParts
         {
             // abort if we arent in a game
             if (!Game1.hasLoadedGame) return;
+            if (!this.Context.PerSaveChallengeInstance.HasPerSaveLoaded)
+            {
+                return;
+            }
+
             var questData = this.CachedQuestData;
             if (questData == null) return;
 

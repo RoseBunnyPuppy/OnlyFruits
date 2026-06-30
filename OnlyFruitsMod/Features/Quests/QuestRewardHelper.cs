@@ -119,7 +119,7 @@ namespace OnlyFruitsMod.Features.Quests
                         if (preSelected == null || !preSelected.TryGetValue("Crop", out var cropString))
                             return false;
 
-                        if (PriceLocator.Instance.TryGetCropPrice(cropString, out var price))
+                        if (PriceLocator.Instance.TryGetFullIdPrice(cropString, out var price))
                         {
                             moneyReward.amount.Value = price;
                             return true;

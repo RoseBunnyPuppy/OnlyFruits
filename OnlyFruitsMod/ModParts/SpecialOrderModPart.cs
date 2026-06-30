@@ -48,7 +48,11 @@ namespace OnlyFruitsMod.ModParts
             ModPartContext context
         ) : base(context)
         {
-            this.questPatchStatusHelper = new SpecialOrderStatusDeterminer(configInstance, this.SpecialOrderKeysConfigModel);
+            this.questPatchStatusHelper = new SpecialOrderStatusDeterminer(
+                configInstance, 
+                this.SpecialOrderKeysConfigModel,
+                this.Context.PerSaveChallengeInstance
+            );
         }
 
         /// <inheritdoc/>
@@ -106,10 +110,11 @@ namespace OnlyFruitsMod.ModParts
                 case OrderPatchingFlavors.CarolineSpecialOrder:
                     this.ModifyCarolineSpecialOrderAssets(questId, specialOrderData);
                     return;
-                case OrderPatchingFlavors.DontPatch: return;
+                case OrderPatchingFlavors.DontPatch: 
+                    return;
                 default:
-                    Debugger.Break();
-                    throw new NotImplementedException();
+                    this.monitor.Log($"Unsuppored asset patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
+                    return;
             }
         }
         protected override void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
@@ -231,7 +236,8 @@ namespace OnlyFruitsMod.ModParts
                     this.ModifyCarolineSpecialOrder(specialOrder);
                     return;
                 default:
-                    throw new NotImplementedException();
+                    this.monitor.Log($"Unsuppored live patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
+                    return;
             }
         }
 
@@ -239,6 +245,11 @@ namespace OnlyFruitsMod.ModParts
         private void OverrideQuestRewards()
         {
             if (!Game1.hasLoadedGame) return;
+            if (!this.Context.PerSaveChallengeInstance.HasPerSaveLoaded)
+            {
+                return;
+            }
+
             var specialOrders = Game1.player.team.specialOrders;
 
             // modify existing special orders

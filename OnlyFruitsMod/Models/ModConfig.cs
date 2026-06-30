@@ -92,7 +92,38 @@
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-restore-quests</remarks>
         public bool RestoreAllQuestRewards { get; set; } = false;
+
+        /// <summary>
+        ///     If true, trashcan upgrades will be allowed.  If false, trashcans will be capped at
+        ///   the basic tier.
+        /// </summary>
+        /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-allow-trashcan-upgrades</remarks>
+        public bool AllowTrashcanUpgrade { get; set; } = false;
         #endregion "Other Section"
+
+        #region "Challenge Section"
+
+        /// <summary>
+        ///     If true, the "do you want to enable the challenge" question will
+        ///   always be asked.
+        /// </summary>
+        /// <remarks>rosebunnypuppy.onlyfruits.ui.challenge-section.option-always-ask-to-use</remarks>
+        public bool AlwaysAskWhetherToUseChallenge { get; set; } = false;
+
+        /// <summary>
+        ///     If true, a message will be displayed on save games where we ARE
+        ///   using the challenge.
+        /// </summary>
+        /// <remarks>rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-enabled</remarks>
+        public bool AnnounceWhenChallengeIsEnabled { get; set; } = true;
+
+        /// <summary>
+        ///     If true, a message will be displayed on save games where we AREN'T
+        ///   using the challenge.
+        /// </summary>
+        /// <remarks>rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled</remarks>
+        public bool AnnounceWhenChallengeIsDisabled { get; set; } = false;
+        #endregion "Challenge Section"
 
 
 
