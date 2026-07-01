@@ -1,5 +1,6 @@
 ﻿using Netcode;
 using OnlyFruitsMod.Extensions;
+using OnlyFruitsMod.Infrastructure;
 using StardewValley;
 using StardewValley.Monsters;
 using StardewValley.Quests;
@@ -10,7 +11,6 @@ namespace OnlyFruitsMod.Features.Quests
     public class DailyQuestRegenerator : IDailyQuestRegenerator
     {
 
-        public static string QOTDOriginalReward { get; } = "RoseBunnyPuppy.OnlyFruits:QOTDOriginalReward";
 
         /// <summary>
         ///     Copy over the values from the old quest, 
@@ -108,14 +108,14 @@ namespace OnlyFruitsMod.Features.Quests
         }
         private int GetOriginalRewardAmount(SlayMonsterQuest quest)
         {
-            if (quest.modData.TryGetValue(QOTDOriginalReward, out var field))
+            if (quest.modData.TryGetValue(HardcodedModDataKeys.OriginalQuestOfTheDayReward, out var field))
                 return int.Parse(field);
 
             return quest.reward.Value;
         }
         private int GetOriginalRewardAmount(ResourceCollectionQuest quest)
         {
-            if (quest.modData.TryGetValue(QOTDOriginalReward, out var field))
+            if (quest.modData.TryGetValue(HardcodedModDataKeys.OriginalQuestOfTheDayReward, out var field))
                 return int.Parse(field);
 
             return quest.reward.Value;
@@ -147,7 +147,7 @@ namespace OnlyFruitsMod.Features.Quests
                 if (markAsOnlyFruitQuest)
                 {
                     var originalReward = this.GetOriginalRewardAmount(oldSlayMonsterQuest);
-                    freshQuest.modData[QOTDOriginalReward] = originalReward.ToString();
+                    freshQuest.modData[HardcodedModDataKeys.OriginalQuestOfTheDayReward] = originalReward.ToString();
                     freshQuest.reward.Value = 0;
                 }
                 else
@@ -167,7 +167,7 @@ namespace OnlyFruitsMod.Features.Quests
                 if (markAsOnlyFruitQuest)
                 {
                     var originalReward = this.GetOriginalRewardAmount(oldResourceCollectionQuest);
-                    freshQuest.modData[QOTDOriginalReward] = originalReward.ToString();
+                    freshQuest.modData[HardcodedModDataKeys.OriginalQuestOfTheDayReward] = originalReward.ToString();
                     freshQuest.reward.Value = 0;
                 }
                 else
