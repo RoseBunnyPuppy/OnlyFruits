@@ -8,6 +8,7 @@ using StardewValley;
 using StardewValley.GameData.SpecialOrders;
 using StardewValley.SpecialOrders;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OnlyFruitsMod.Features.Quests.SpecialOrders
 {
@@ -65,25 +66,48 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
 
             // option 1: remove 'season_spring' because no fruits in it
             // option 2: Replace with  "PICK_ITEM Strawberry"
-            var springElement = randomizedCrops.Values.ExpectSingleByRequiredTag("season_spring");
-            springElement.Value = PickItemHelper.Instance.Serialize(new string[] {
-                "Strawberry",
-            });
+            const string SpringSeasonCropKey = "season_spring";
+            const string SummerSeasonCropKey = "season_summer";
+            const string FallSeasonCropKey = "season_fall";
+            if (!randomizedCrops.Values.TryGetSingleByRequiredTag(SpringSeasonCropKey, out var springElement))
+            {
+                Logger.Instance.Monitor.Log($"Failed to find the 'reuired tag' for season '{SpringSeasonCropKey}' for Lewis's special order", LogLevel.Error);
+            }
+            else
+            {
+                springElement.Value = PickItemHelper.Instance.Serialize(new string[] {
+                    "Strawberry",
+                });
+            }
+
 
             // (season_summer) Replace with  "PICK_ITEM Blueberry, Melon, Hot Pepper"
-            var summerElement = randomizedCrops.Values.ExpectSingleByRequiredTag("season_summer");
-            summerElement.Value = PickItemHelper.Instance.Serialize(new string[] {
-                "Blueberry",
-                "Melon",
-                "Hot Pepper",
-            });
+            if (!randomizedCrops.Values.TryGetSingleByRequiredTag(SummerSeasonCropKey, out var summerElement))
+            {
+                Logger.Instance.Monitor.Log($"Failed to find the 'reuired tag' for season '{SummerSeasonCropKey}' for Lewis's special order", LogLevel.Error);
+            }
+            else
+            {
+                summerElement.Value = PickItemHelper.Instance.Serialize(new string[] {
+                    "Blueberry",
+                    "Melon",
+                    "Hot Pepper",
+                });
+            }
+
 
             // (season_fall) Replace with "PICK_ITEM Cranberries, Grape"
-            var fallElement = randomizedCrops.Values.ExpectSingleByRequiredTag("season_fall");
-            fallElement.Value = PickItemHelper.Instance.Serialize(new string[] {
-                "Cranberries",
-                "Grape",
-            });
+            if (!randomizedCrops.Values.TryGetSingleByRequiredTag(FallSeasonCropKey, out var fallElement))
+            {
+                Logger.Instance.Monitor.Log($"Failed to find the 'reuired tag' for season '{FallSeasonCropKey}' for Lewis's special order", LogLevel.Error);
+            }
+            else
+            {
+                fallElement.Value = PickItemHelper.Instance.Serialize(new string[] {
+                    "Cranberries",
+                    "Grape",
+                });
+            }
         }
         public void PatchLiveData(SpecialOrder specialOrder)
         {
@@ -92,9 +116,8 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
                 Logger.Instance.Monitor.Log("Failed to find the pre-selected crop for Lewis's quest", LogLevel.Error);
                 return;
             }
-
-            var updatedCropKey = this.GetFruitCrop(selectedCrop, specialOrder.generationSeed.Value);
-            if (updatedCropKey == selectedCrop) return;
+            if (!this.TryGetFruitCrop(selectedCrop, specialOrder.generationSeed.Value, out var updatedCropKey))
+                return;
             specialOrder.preSelectedItems[HardcodedQuestConstants.RandomizedElementNames.Crop] = updatedCropKey;
         }
         private string GetRandomChoice(int seed, string orig, SeasonStatusPair pair)
@@ -108,24 +131,43 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             var choices = this.SeasonToFruitList[season];
             return $"{CropPrefix}{choices[rand.Next(choices.Count)]}";
         }
-        public string GetFruitCrop(string key, int seed)
+
+        private bool TryGetFruitCrop(
+            string key, 
+            int seed, 
+            [NotNullWhen(returnValue: true)]out string? fruitCrop
+        )
         {
-            
+            // get the partial id for the given item
             if (!PrefixStripper.Instance.TryStripPrefix(key, CropPrefix, out var sansPrefix))
             {
-                Debugger.Break();
-                throw new InvalidOperationException();
+                Logger.Instance.Monitor.Log($"Failed to get the partial id for an id {key}", LogLevel.Error);
+                fruitCrop = default;
+                return false;
             }
 
             if (this.CropToSeasonMap.TryGetValue(sansPrefix, out var mappedInfo))
-                return this.GetRandomChoice(seed, key, mappedInfo);
+            {
+                fruitCrop = this.GetRandomChoice(seed, key, mappedInfo);
+                return true;
+            }
 
             var cropInfo = ItemRegistry.GetData(key);
-            if (cropInfo == null) throw new InvalidOperationException($"Unexpected item id: {key}");
-            if (this.CropToSeasonMap.TryGetValue(cropInfo.InternalName, out var mappedNameInfo))
-                return this.GetRandomChoice(seed, key, mappedNameInfo);
+            if (cropInfo == null)
+            {
+                fruitCrop = default;
+                Logger.Instance.Monitor.Log($"No item information registered for {key}", LogLevel.Error);
+                return false;
+            }
 
-            return key;
+            if (this.CropToSeasonMap.TryGetValue(cropInfo.InternalName, out var mappedNameInfo))
+            {
+                fruitCrop = this.GetRandomChoice(seed, key, mappedNameInfo);
+                return true;
+            }
+
+            fruitCrop = key;
+            return true;
         }
 
         private static Dictionary<LewisSeasons, List<string>> CreateSeasonMap(Dictionary<string, SeasonStatusPair> source)

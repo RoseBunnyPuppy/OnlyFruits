@@ -1,4 +1,5 @@
 ﻿using StardewValley.GameData.SpecialOrders;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OnlyFruitsMod.Extensions
 {
@@ -8,10 +9,15 @@ namespace OnlyFruitsMod.Extensions
         {
             return randomizedElements.FirstOrDefault(x => x.Name == name);
         }
-        public static RandomizedElementItem ExpectSingleByRequiredTag(this List<RandomizedElementItem> randomizedElements, string expectedTag)
+
+        public static bool TryGetSingleByRequiredTag(
+            this List<RandomizedElementItem> randomizedElements, 
+            string expectedTag, 
+            [NotNullWhen(returnValue: true)] out RandomizedElementItem? match
+        )
         {
-            var match = randomizedElements.FirstOrDefault(x => x.RequiredTags == expectedTag);
-            return match ?? throw new InvalidOperationException($"Failed to find single item with tag '{expectedTag}'");
+            match = randomizedElements.FirstOrDefault(x => x.RequiredTags == expectedTag);
+            return match != null;
         }
     }
 }
