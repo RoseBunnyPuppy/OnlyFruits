@@ -159,7 +159,6 @@ namespace OnlyFruitsMod.ModParts
             foreach (var specialOrder in specialOrders)
             {
                 if (specialOrder == null) continue;
-
                 var questId = specialOrder.questKey.ToString();
                 var flavor = this.questPatchStatusHelper.GetPatchingFlavor(questId);
                 this.specialOrderCleaner.PatchLiveData(specialOrder, flavor);

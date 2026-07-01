@@ -5,11 +5,6 @@ using StardewValley.SpecialOrders;
 
 namespace OnlyFruitsMod.Features.Quests.SpecialOrders
 {
-    public interface ISpecialOrderCleanerDriver
-    {
-        void PatchAsset(SpecialOrderData? specialOrderData, OrderPatchingFlavors flavor);
-        void PatchLiveData(SpecialOrder? specialOrder, OrderPatchingFlavors flavor);
-    }
     public class SpecialOrderCleanerDriver : ISpecialOrderCleanerDriver
     {
         private readonly Dictionary<OrderPatchingFlavors, ISpecialOrderCleaner> flavoredSpecialOrderCleaners = new()
@@ -22,6 +17,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             [OrderPatchingFlavors.DontPatch] = new DontPatchSpecialOrderCleaner(),
 
         };
+        /// <inheritdoc />
         public void PatchAsset(SpecialOrderData? specialOrderData, OrderPatchingFlavors flavor)
         {
             if (this.flavoredSpecialOrderCleaners.TryGetValue(flavor, out var cleaner))
@@ -36,6 +32,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             }
         }
 
+        /// <inheritdoc />
         public void PatchLiveData(SpecialOrder? specialOrder, OrderPatchingFlavors flavor)
         {
             if (specialOrder == null) return;
