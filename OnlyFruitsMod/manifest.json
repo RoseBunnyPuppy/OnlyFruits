@@ -1,7 +1,8 @@
-﻿{
+﻿
+{
   "Name": "Only Fruits",
   "Author": "RoseBunnyPuppy",
-  "Version": "0.0.1",
+  "Version": "0.0.2",
   "Description": "Only Fruits! A mod to enforce the restrictions for Cozyandcaffeinated's series.",
   "UniqueID": "RoseBunnyPuppy.OnlyFruits",
   "EntryDll": "OnlyFruitsMod.dll",
