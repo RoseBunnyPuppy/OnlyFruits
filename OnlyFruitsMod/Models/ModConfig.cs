@@ -12,20 +12,29 @@
         /// </summary>
         None = 1,
         /// <summary>
+        ///   Show every log.
+        /// </summary>
+        All = 2,
+        /// <summary>
         ///   Show errors, info, and debug.
         /// </summary>
-        Debug = 2,
+        Debug = 20,
         /// <summary>
         ///   Show errors and info.
         /// </summary>
-        Info = 3,
+        Info = 30,
         /// <summary>
         ///   Show only errors.
         /// </summary>
-        Error = 4,
+        Error = 40,
     }
     public sealed class ModConfig
     {
+#if DEBUGPUBLISH
+        public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.Debug;
+#elif DEBUG
+        public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.All;
+#endif
         #region "Sellable Section"
         /// <summary>
         ///   If true, meme items are sellable.
@@ -101,18 +110,6 @@
 
         #region "Other Section"
         /// <summary>
-        ///   If true, attempt to restore all cached prices.
-        /// </summary>
-        /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-restore-prices</remarks>
-        public bool RestoreAllPrices { get; set; } = false;
-
-        /// <summary>
-        ///   If true, attempt to restore all cached quest rewards.
-        /// </summary>
-        /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-restore-quests</remarks>
-        public bool RestoreAllQuestRewards { get; set; } = false;
-
-        /// <summary>
         ///     If true, trashcan upgrades will be allowed.  If false, trashcans will be capped at
         ///   the basic tier.
         /// </summary>
@@ -123,7 +120,7 @@
         ///   Configures how verbose the logging is.
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-logging-verbosity</remarks>
-        public OnlyFruitsLogLevels LoggingLevel { get; set; } = OnlyFruitsLogLevels.Error;
+        public OnlyFruitsLogLevels LoggingLevel { get; set; } = DefaultLogLevel;
 
 
         #endregion "Other Section"

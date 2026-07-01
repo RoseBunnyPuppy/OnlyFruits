@@ -3,6 +3,7 @@ using StardewModdingAPI.Integrations.GenericModConfigMenu;
 
 namespace OnlyFruitsMod.Features.UIHelpers
 {
+    public delegate object TokensProvider();
     /// <summary>
     ///     A wrapper class to allow defining menu chunks in 
     ///   a more fluent manner (as well as using a standardized 
@@ -67,7 +68,7 @@ namespace OnlyFruitsMod.Features.UIHelpers
         /// <param name="tokens">An object containing token key/value pairs. This can be an anonymous object (like <c>new { value = 42, name = "Cranberries" }</c>), a dictionary, or a class instance.</param>
         public ConfigMenuHelper AddParagraph(
             string i18nKey,
-            Func<object>? tokens
+            TokensProvider? tokens
         )
         {
             this.configMenu.AddParagraph(
@@ -127,21 +128,52 @@ namespace OnlyFruitsMod.Features.UIHelpers
         /// <returns></returns>
         public ConfigMenuHelper AddTextOption(
             string i18nKeyName,
-            Func<string> getValue, 
+            Func<string> getValue,
             Action<string> setValue,
-            string[] allowedValues
+            Func<string[]> allowedValues,
+            TokensProvider? tokens = default
         )
         {
             this.configMenu.AddTextOption(
                 mod: this.ModManifest,
                 name: () => this.modHelper.Translation.Get($"{i18nKeyName}.label"),
-                tooltip: () => this.modHelper.Translation.Get($"{i18nKeyName}.tooltip"),
+                tooltip: () => this.modHelper.Translation.Get($"{i18nKeyName}.tooltip", tokens?.Invoke()),
                 getValue: getValue,
                 setValue: setValue,
-                allowedValues: allowedValues,
+                allowedValues: allowedValues(),
                 formatAllowedValue: choice => this.modHelper.Translation.Get($"{i18nKeyName}.choices.{choice}")
             );
             return this;
+        }
+
+        /// <summary>
+        ///   Add a string option at the current position in the form.
+        /// </summary>
+        /// <param name="i18nKeyName">
+        ///     The base name of the i18n key.  
+        ///     .label and .tooltip will be used for the option
+        ///     .choices.{{allowed_values}} will be used for the formatting of the options.
+        /// </param>
+        /// <param name="getValue">Get the current value from the mod config.</param>
+        /// <param name="setValue">Set a new value in the mod config.</param>
+        /// <param name="allowedValues">The values that can be selected, or <c>null</c> to allow any.</param>
+        /// <returns></returns>
+        public ConfigMenuHelper AddTextOption(
+            string i18nKeyName,
+            Func<string> getValue, 
+            Action<string> setValue,
+            string[] allowedValues,
+            TokensProvider? tokens = default
+        )
+        {
+            return this.AddTextOption(
+                i18nKeyName,
+                getValue,
+                setValue,
+                allowedValues: () => allowedValues,
+                tokens
+            );
+
         }
 
     }

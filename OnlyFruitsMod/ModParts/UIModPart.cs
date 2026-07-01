@@ -1,10 +1,12 @@
-﻿using OnlyFruitsMod.Features.UIHelpers;
+﻿using OnlyFruitsMod.Features.Logging;
+using OnlyFruitsMod.Features.UIHelpers;
 using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Integrations.GenericModConfigMenu;
+using System.Diagnostics;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -19,10 +21,16 @@ namespace OnlyFruitsMod.ModParts
             ModPartContext context
         ) : base(context)
         {
-
+            this.configInstance.Changed += ConfigInstance_Changed;
         }
-       
 
+        /// <summary>
+        ///   Synchronize the log level.
+        /// </summary>
+        private void ConfigInstance_Changed(object? sender, EventArgs e)
+        {
+            Logger.Instance.MaxLogLevel = this.configInstance.Config.LoggingLevel;
+        }
 
         protected override void AttachListeners()
         {
@@ -43,15 +51,17 @@ namespace OnlyFruitsMod.ModParts
         readonly EnumChoiceMap<OnlyFruitsLogLevels> LogLevelsChoiceMap = EnumChoiceMap.Create(new Dictionary<OnlyFruitsLogLevels, string>()
         {
             [OnlyFruitsLogLevels.None] = "none",
+            [OnlyFruitsLogLevels.All] = "all",
             [OnlyFruitsLogLevels.Debug] = "debug",
             [OnlyFruitsLogLevels.Info] = "info",
             [OnlyFruitsLogLevels.Error] = "error",
         }, OnlyFruitsLogLevels.Error, new OnlyFruitsLogLevels[]
         {
             OnlyFruitsLogLevels.None,
-            OnlyFruitsLogLevels.Debug,
-            OnlyFruitsLogLevels.Info,
+            OnlyFruitsLogLevels.All,
             OnlyFruitsLogLevels.Error,
+            OnlyFruitsLogLevels.Info,
+            OnlyFruitsLogLevels.Debug,
         });
 
 
@@ -59,13 +69,12 @@ namespace OnlyFruitsMod.ModParts
         {
             var configMenu = this.helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu is null) return;
-
+            
             ConfigMenuHelper configMenuHelper = new(
                 this.ModManifest,
                 this.helper,
                 configMenu
             );
-
             configMenuHelper
                 .FluentBlock(configMenu =>
                 {
@@ -104,11 +113,6 @@ namespace OnlyFruitsMod.ModParts
                     getValue: () => configInstance.Config.AllowSellingArtisinalItems,
                     setValue: value => configInstance.Config.AllowSellingArtisinalItems = value
                 )
-                .AddBoolOption(
-                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-no-nonfruity-shops",
-                    getValue: () => configInstance.Config.PatchNonFruityShopItems,
-                    setValue: value => configInstance.Config.PatchNonFruityShopItems = value
-                )
                 // question section
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.questing-section")
                 .AddBoolOption(
@@ -143,25 +147,31 @@ namespace OnlyFruitsMod.ModParts
                 // "other" section
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.other-section")
                 .AddBoolOption(
-                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.other-section.option-restore-prices",
-                    getValue: () => configInstance.Config.RestoreAllPrices,
-                    setValue: value => configInstance.Config.RestoreAllPrices = value
-                )
-                .AddBoolOption(
-                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.other-section.option-restore-quests",
-                    getValue: () => configInstance.Config.RestoreAllQuestRewards,
-                    setValue: value => configInstance.Config.RestoreAllQuestRewards = value
-                )
-                .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.other-section.option-allow-trashcan-upgrades",
                     getValue: () => configInstance.Config.AllowTrashcanUpgrade,
                     setValue: value => configInstance.Config.AllowTrashcanUpgrade = value
+                )
+                .AddBoolOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-no-nonfruity-shops",
+                    getValue: () => configInstance.Config.PatchNonFruityShopItems,
+                    setValue: value => configInstance.Config.PatchNonFruityShopItems = value
                 )
                 .AddTextOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.other-section.option-logging-verbosity",
                     getValue: () => LogLevelsChoiceMap.GetStringValue(configInstance.Config.LoggingLevel),
                     setValue: value => configInstance.Config.LoggingLevel = LogLevelsChoiceMap.GetEnumValue(value),
-                    allowedValues: LogLevelsChoiceMap.GetAllowed()
+                    allowedValues: LogLevelsChoiceMap.GetAllowed(),
+                    tokens: () => {
+                        const string i18nKeyName = "rosebunnypuppy.onlyfruits.ui.other-section.option-logging-verbosity";
+                        return new
+                        {
+                            None = this.helper.Translation.Get($"{i18nKeyName}.choices.{LogLevelsChoiceMap.GetStringValue(OnlyFruitsLogLevels.None)}"),
+                            All = this.helper.Translation.Get($"{i18nKeyName}.choices.{LogLevelsChoiceMap.GetStringValue(OnlyFruitsLogLevels.All)}"),
+                            Debug = this.helper.Translation.Get($"{i18nKeyName}.choices.{LogLevelsChoiceMap.GetStringValue(OnlyFruitsLogLevels.Debug)}"),
+                            Info = this.helper.Translation.Get($"{i18nKeyName}.choices.{LogLevelsChoiceMap.GetStringValue(OnlyFruitsLogLevels.Info)}"),
+                            Error = this.helper.Translation.Get($"{i18nKeyName}.choices.{LogLevelsChoiceMap.GetStringValue(OnlyFruitsLogLevels.Error)}"),
+                        };
+                    }
                 )
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.challenge-section")
                 .AddBoolOption(
