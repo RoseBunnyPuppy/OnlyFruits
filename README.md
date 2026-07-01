@@ -48,13 +48,16 @@ If you later disable the mod, then your original trash can level will be restore
 Many of these changes are configurable.  By default, every restriction is enabled.  But there is a mod UI available which allows enabling/disabling the various parts of the mod.
 
 Once this mod is installed:
-- If an existing save is opened for the first time, you will be asked if you want to enable the challenge.
+- If an existing save is opened for the first time, you will be asked if you want to enable the challenge.  ![Image description](./meta-images/challenge-enable-question.png)
   - if you select "yes", then the effects of the mod will be applied.
+  ![Image description](./meta-images/challenge-enabled-announcement.png)
   - if you select "no", then the effects will NOT be applied. Once you save that file, you wont be asked again.
+  ![Image description](./meta-images/challenge-disabled-announcement.png)
 - If a new file is created, you will be asked if you want to enable the challenge.
   - if you select "yes", then the effects of the mod will be applied.
   - if you select "no", then the effects will NOT be applied. Once you save that file, you wont be asked again.
 Every time you play a save that has the mod enabled, you will be notified that the mod is enabled!
+![Image description](./meta-images/challenge-enabled-announcement.png)
 
 ## Installing the mod
 **IMPORTANT**: Please make sure you have made a backup of your worlds before trying this mod: [Instructions](https://www.stardewvalleywiki.com/Saves#Find_your_save_files)
