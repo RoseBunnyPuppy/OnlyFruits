@@ -1,4 +1,5 @@
 ﻿using OnlyFruitsMod.Features.ItemIds;
+using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
@@ -98,12 +99,12 @@ namespace OnlyFruitsMod.Features.Fruits
 
                 var preItems = this.GetScopedItemIds(ItemIdPrefixes.Objects).ToArray();
                 var preCount = this.Count;
-                if(this.Verbose) this.monitor.Log($"Finding '{label}'.", LogLevel.Debug);
+                if(this.Verbose) Logger.Instance.Log($"Finding '{label}'.", LogLevel.Debug);
                 action();
                 var actualCount = this.Count - preCount;
                 if (actualCount > 0)
                     newItems = this.GetScopedItemIds(ItemIdPrefixes.Objects).Except(preItems).ToArray();
-                if (this.Verbose) this.monitor.Log($"Found {actualCount} '{label}'.", LogLevel.Debug);
+                if (this.Verbose) Logger.Instance.Log($"Found {actualCount} '{label}'.", LogLevel.Debug);
                 return newItems;
             }
             bool RunRecipeBatch(string label, RecipeTracker recipeTracker)
@@ -123,10 +124,10 @@ namespace OnlyFruitsMod.Features.Fruits
                 var addedItems = this.GetScopedItemIds(ItemIdPrefixes.Objects).Except(preItems).ToArray();
                 if (addedItems.Any())
                 {
-                    if (this.Verbose) this.monitor.Log($"================", LogLevel.Debug);
+                    if (this.Verbose) Logger.Instance.Log($"================", LogLevel.Debug);
                     foreach (var addedId in addedItems)
                     {
-                        if (this.Verbose) this.monitor.Log($"{label}: {addedId} '{data[addedId].DisplayName}'", LogLevel.Debug);
+                        if (this.Verbose) Logger.Instance.Log($"{label}: {addedId} '{data[addedId].DisplayName}'", LogLevel.Debug);
                     }
                 }
                 var postCount = this.Count;

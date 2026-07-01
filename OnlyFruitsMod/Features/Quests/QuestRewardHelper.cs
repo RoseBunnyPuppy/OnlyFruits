@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Netcode;
 using OnlyFruitsMod.Extensions;
+using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Infrastructure;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Objects;
 using StardewValley.GameData.SpecialOrders;
@@ -25,14 +27,14 @@ namespace OnlyFruitsMod.Features.Quests
             var moneyRewards = specialOrder.Rewards.Where(x => x.Type == HardcodedQuestConstants.RewardTypes.Gems).ToArray();
             foreach (var reward in moneyRewards)
             {
-                const string AmountKey = "Amount";
-                if (!reward.Data.TryGetValue(AmountKey, out _))
+                const string ValueKey = "Amount";
+                if (!reward.Data.TryGetValue(ValueKey, out _))
                 {
-                    Debugger.Break();
-                    throw new InvalidOperationException("Missing the amount value");
+                    Logger.Instance.Log($"Failed to find the '{ValueKey}' data for the Gem reward for special order {specialOrder.Name}", LogLevel.Error);
+                    continue;
                 }
 
-                reward.Data[AmountKey] = "0";
+                reward.Data[ValueKey] = "0";
             }
         }
         public bool SetGemRewardToZero(SpecialOrder specialOrder)
@@ -79,6 +81,7 @@ namespace OnlyFruitsMod.Features.Quests
             strAmount = match.Data[AmountKey];
             return true;
         }
+
         public bool RestoreGemReward(SpecialOrder specialOrder)
         {
             var data = specialOrder.GetData();
@@ -178,13 +181,13 @@ namespace OnlyFruitsMod.Features.Quests
             var moneyRewards = specialOrder.Rewards.Where(x => x.Type == HardcodedQuestConstants.RewardTypes.Money).ToArray();
             foreach (var reward in moneyRewards)
             {
-                const string AmountKey = "Amount";
-                if (!reward.Data.TryGetValue(AmountKey, out _))
+                const string ValueKey = "Amount";
+                if (!reward.Data.TryGetValue(ValueKey, out _))
                 {
-                    Debugger.Break();
-                    throw new InvalidOperationException("Missing the amount value");
+                    Logger.Instance.Log($"Failed to find the '{ValueKey}' data for the Money reward for special order {specialOrder.Name}", LogLevel.Error);
+                    continue;
                 }
-                reward.Data[AmountKey] = "0";
+                reward.Data[ValueKey] = "0";
             }
         }
 

@@ -1,25 +1,13 @@
-﻿using Netcode;
-using OnlyFruitsMod.Extensions;
-using OnlyFruitsMod.Features.Fruits;
-using OnlyFruitsMod.Features.ModConfiguration;
+﻿using OnlyFruitsMod.Extensions;
+using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.Quests;
 using OnlyFruitsMod.Features.Quests.Models;
 using OnlyFruitsMod.Features.ReloadHelpers;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
-using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.GameData.Shops;
-using StardewValley.GameData.SpecialOrders;
-using StardewValley.Minigames;
-using StardewValley.Quests;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.AccessControl;
-using static StardewValley.Minigames.TargetGame;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -92,7 +80,7 @@ namespace OnlyFruitsMod.ModParts
         {
             if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataQuests))
             {
-                this.monitor.LogAssetReady(this, e.NameWithoutLocale);
+                Logger.Instance.LogAssetReady(this, e.NameWithoutLocale);
                 // re-apply the live data changes if needed
                 if (this.reloadManager.ConsumeReload())
                 {

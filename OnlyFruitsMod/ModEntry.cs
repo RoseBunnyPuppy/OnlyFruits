@@ -1,4 +1,5 @@
-﻿using OnlyFruitsMod.Features.ModConfiguration;
+﻿using OnlyFruitsMod.Features.Logging;
+using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.PerSaveChallengeInformation;
 using OnlyFruitsMod.ModParts;
 using OnlyFruitsMod.ModParts.Models;
@@ -29,10 +30,13 @@ namespace OnlyFruitsMod
             );
             return modPartContext;
         }
+        
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            Logger.Instance.SetMonitor(this.Monitor);
+
             var modPartContext = this.BuildPartContext(helper);
             this.ConfigInstance = modPartContext.ConfigInstance;
 

@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using OnlyFruitsMod.Features.Logging;
+using StardewModdingAPI;
 using System.Diagnostics;
 
 namespace OnlyFruitsMod.Features.Quests
@@ -46,7 +47,7 @@ namespace OnlyFruitsMod.Features.Quests
         {
             var scope = isAsset ? "Asset" : "Live";
             var statusMap = this.GetMap(isAsset);
-            if (this.Verbose) this.monitor.Log($"[{this.source} | {scope}] {questId}: {flavor}", LogLevel.Debug);
+            if (this.Verbose) Logger.Instance.Log($"[{this.source} | {scope}] {questId}: {flavor}", LogLevel.Debug);
             if (!dontOverride)
             {
                 statusMap[questId] = flavor;

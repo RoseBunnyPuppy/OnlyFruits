@@ -21,9 +21,6 @@ namespace OnlyFruitsMod.Features.Quests
             // dont patch if the challenge isnt enabled.
             if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
 
-            // dont patch if we are restoring the quest rewards
-            if (this.Context.ConfigInstance.Config.RestoreAllQuestRewards) return false;
-
             // dont patch if we arent restricting non-fruity quests
             else if (!this.Context.ConfigInstance.Config.Questing_NoMoneyFromNonFruityQuests) return false;
 
@@ -33,9 +30,6 @@ namespace OnlyFruitsMod.Features.Quests
         {
             // dont patch if the challenge isnt enabled.
             if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
-
-            // dont patch if we are restoring the quest rewards
-            if (this.Context.ConfigInstance.Config.RestoreAllQuestRewards) return false;
 
             // dont patch if we arent restricting non-fruity quests
             else if (!this.Context.ConfigInstance.Config.Questing_NoMoneyFromNonFruityQuests) return false;

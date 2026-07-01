@@ -1,34 +1,18 @@
 ﻿using Netcode;
 using OnlyFruitsMod.Extensions;
 using OnlyFruitsMod.Features.Fruits;
-using OnlyFruitsMod.Features.ItemIds;
-using OnlyFruitsMod.Features.ModConfiguration;
+using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Features.ReloadHelpers;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
-using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Buildings;
 using StardewValley.GameData;
-using StardewValley.GameData.Objects;
-using StardewValley.GameData.Pants;
-using StardewValley.GameData.Shirts;
-using StardewValley.GameData.SpecialOrders;
 using StardewValley.GameData.Tools;
-using StardewValley.GameData.Weapons;
-using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
 using StardewValley.Objects;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -123,18 +107,12 @@ namespace OnlyFruitsMod.ModParts
             // dont patch if the challenge isnt enabled.
             if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
 
-            // dont patch if we are restoring
-            if (this.configInstance.Config.RestoreAllPrices) return false;
-
             return false;
         }
         private bool ShouldPatchItem(string itemId)
         {
             // dont patch if the challenge isnt enabled.
             if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
-
-            // dont patch if we are restoring
-            if (this.configInstance.Config.RestoreAllPrices) return false;
 
             // if it is a fruit, we arent patching
             if (this.ItemManager.IsFruityId(ItemIdPrefixes.Objects, itemId)) return false;
@@ -401,7 +379,7 @@ namespace OnlyFruitsMod.ModParts
         {
             if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataObjects))
             {
-                this.monitor.LogAssetReady(this, e.NameWithoutLocale);
+                Logger.Instance.LogAssetReady(this, e.NameWithoutLocale);
                 // re-apply the live data changes if needed
                 if (this.reloadManager.ConsumeReload())
                 {
@@ -431,6 +409,7 @@ namespace OnlyFruitsMod.ModParts
                 {
                     if (upgradeFrom.Condition.StartsWith("PLAYER_HAS_TRASH_CAN_LEVEL"))
                     {
+                        Logger.Instance.LogDebug($"Disabling trash can asset {key}::{upgradeFrom.Condition}");
                         upgradeFrom.Condition = DisabledCondition;
                     }
                 }
@@ -532,16 +511,21 @@ namespace OnlyFruitsMod.ModParts
             // if there is "original price data" directly stored on the item, use it
             if (item.TryGetDirectlyCachedModDataPrice(out var directPrice))
             {
+                if (priceField.Value != directPrice)
+                    Logger.Instance.LogDebug($"Restoring price of {item.QualifiedItemId} to {directPrice} [cached value]");
+
                 priceField.Value = directPrice;
                 return true;
             }
 
             // if there is a cached price, use it
-            if (this.priceCache.TryGetPriceFull(item, out var assetPrice, out var wasScopeKnown))
+            if (this.priceCache.TryGetPriceFull(item, out var assetPrice, out _))
             {
                 // dont update anything if the price is the same
                 if (priceField.Value == assetPrice) return true;
                 
+                Logger.Instance.LogDebug($"Restoring price of {item.QualifiedItemId} to {directPrice} [asset value]");
+
                 // otherwise, use the cached price
                 priceField.Value = assetPrice;
                 return true;
