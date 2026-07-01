@@ -31,7 +31,9 @@
     public sealed class ModConfig
     {
 #if DEBUGPUBLISH
-        public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.Debug;
+        public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.Error;
+#elif RELEASEPUBLISH
+        public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.Error;
 #elif DEBUG
         public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.All;
 #endif
