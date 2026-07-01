@@ -124,18 +124,12 @@ namespace OnlyFruitsMod.ModParts
             // dont patch if the challenge isnt enabled.
             if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
 
-            // dont patch if we are restoring
-            if (this.configInstance.Config.RestoreAllPrices) return false;
-
             return false;
         }
         private bool ShouldPatchItem(string itemId)
         {
             // dont patch if the challenge isnt enabled.
             if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
-
-            // dont patch if we are restoring
-            if (this.configInstance.Config.RestoreAllPrices) return false;
 
             // if it is a fruit, we arent patching
             if (this.ItemManager.IsFruityId(ItemIdPrefixes.Objects, itemId)) return false;
@@ -538,7 +532,7 @@ namespace OnlyFruitsMod.ModParts
             }
 
             // if there is a cached price, use it
-            if (this.priceCache.TryGetPriceFull(item, out var assetPrice, out var wasScopeKnown))
+            if (this.priceCache.TryGetPriceFull(item, out var assetPrice, out _))
             {
                 // dont update anything if the price is the same
                 if (priceField.Value == assetPrice) return true;

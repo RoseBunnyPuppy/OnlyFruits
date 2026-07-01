@@ -28,8 +28,6 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
         {
             // dont patch if the challenge isnt enabled.
             if (!this.PerSaveChallengeInstance.IsChallengeEnabled) return OrderPatchingFlavors.DontPatch;
-            // if we are restoring the quests, don't patch anything
-            if (this.configInstance.Config.RestoreAllQuestRewards) return OrderPatchingFlavors.DontPatch;
             // if this is a non-fruity quest
             else if (this.SpecialOrderKeysConfigModel.AlwaysResetMoney.Contains(questId))
             {
