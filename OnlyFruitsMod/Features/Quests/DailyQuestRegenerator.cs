@@ -1,13 +1,16 @@
 ﻿using Netcode;
 using OnlyFruitsMod.Extensions;
 using StardewValley;
+using StardewValley.Monsters;
 using StardewValley.Quests;
+using System.Security.AccessControl;
 
 namespace OnlyFruitsMod.Features.Quests
 {
     public class DailyQuestRegenerator : IDailyQuestRegenerator
     {
 
+        public static string QOTDOriginalReward { get; } = "RoseBunnyPuppy.OnlyFruits:QOTDOriginalReward";
 
         /// <summary>
         ///     Copy over the values from the old quest, 
@@ -25,6 +28,7 @@ namespace OnlyFruitsMod.Features.Quests
             freshQuest.dayQuestAccepted.Value = oldQuest.dayQuestAccepted.Value;
 
             // lock the fields, invoke the action, and auto-unlock
+            freshQuest.reward.WithLockedField(() =>
             freshQuest.target.WithLockedField(() =>
             freshQuest.monsterName.WithLockedField(() =>
             freshQuest.numberKilled.WithLockedField(() =>
@@ -34,9 +38,25 @@ namespace OnlyFruitsMod.Features.Quests
             {
                 // initialize using the locked fields
                 freshQuest.loadQuestInfo();
-            }))))));
+            })))))));
+
+
+            freshQuest.parts.Clear();
+            freshQuest.parts.AddRange(oldQuest.parts.SkipLast(1));
+            freshQuest.parts.Add(new DescriptionElement("Strings\\StringsFromCSFiles:FishingQuest.cs.13274", freshQuest.reward.Value));
+
+            freshQuest.dialogueparts.Clear();
+            freshQuest.dialogueparts.AddRange(oldQuest.dialogueparts);
+
+            freshQuest.objective.Value = new DescriptionElement("Strings\\StringsFromCSFiles:SlayMonsterQuest.cs.13770", "0", freshQuest.numberToKill.Value, freshQuest.monster.Value);
+
+            freshQuest.reloadDescription();
+            freshQuest.reloadObjective();
         }
-        private void CopyResourceCollectionQuest(ResourceCollectionQuest freshQuest, ResourceCollectionQuest oldQuest)
+        private void CopyResourceCollectionQuest(
+            ResourceCollectionQuest freshQuest,
+            ResourceCollectionQuest oldQuest
+        )
         {
             freshQuest.ItemId.Value = oldQuest.ItemId.Value;
             freshQuest.target.Value = oldQuest.target.Value;
@@ -45,8 +65,8 @@ namespace OnlyFruitsMod.Features.Quests
             freshQuest.numberCollected.Value = oldQuest.numberCollected.Value;
             freshQuest.number.Value = oldQuest.number.Value;
 
-            _ = 23;
             // lock the fields, invoke the action, and auto-unlock
+            freshQuest.reward.WithLockedField(() =>
             freshQuest.ItemId.WithLockedField(() =>
             freshQuest.target.WithLockedField(() =>
             freshQuest.daysLeft.WithLockedField(() =>
@@ -55,7 +75,7 @@ namespace OnlyFruitsMod.Features.Quests
             freshQuest.number.WithLockedField(() =>
             {
                 freshQuest.loadQuestInfo();
-            }))))));
+            })))))));
 
 
             Item item = ItemRegistry.Create(freshQuest.ItemId.Value);
@@ -79,7 +99,20 @@ namespace OnlyFruitsMod.Features.Quests
             }
             Game1.netWorldState.Value.SetQuestOfTheDay(quest);
         }
+        private int GetOriginalRewardAmount(SlayMonsterQuest quest)
+        {
+            if (quest.modData.TryGetValue(QOTDOriginalReward, out var field))
+                return int.Parse(field);
 
+            return quest.reward.Value;
+        }
+        private int GetOriginalRewardAmount(ResourceCollectionQuest quest)
+        {
+            if (quest.modData.TryGetValue(QOTDOriginalReward, out var field))
+                return int.Parse(field);
+
+            return quest.reward.Value;
+        }
         public Quest RegenerateQuest(Quest quest, bool markAsOnlyFruitQuest)
         {
             // think this is good because it rewards based on the sell price of the items
@@ -106,17 +139,16 @@ namespace OnlyFruitsMod.Features.Quests
                 var freshQuest = new SlayMonsterQuest();
                 if (markAsOnlyFruitQuest)
                 {
+                    var originalReward = this.GetOriginalRewardAmount(oldSlayMonsterQuest);
+                    freshQuest.modData[QOTDOriginalReward] = originalReward.ToString();
                     freshQuest.reward.Value = 0;
-                    freshQuest.reward.WithLockedField(() =>
-                    {
-                        this.CopySlayQuest(freshQuest, oldQuest: oldSlayMonsterQuest);
-                    });
                 }
                 else
                 {
-                    this.CopySlayQuest(freshQuest, oldQuest: oldSlayMonsterQuest);
+                    freshQuest.reward.Value = this.GetOriginalRewardAmount(oldSlayMonsterQuest);
                 }
 
+                this.CopySlayQuest(freshQuest, oldQuest: oldSlayMonsterQuest);
                 this.ConfigureOnlyFruitsQOTD(freshQuest, markAsOnlyFruitQuest);
                 freshQuest.accepted.Value = quest.accepted.Value;
                 return freshQuest;
@@ -127,16 +159,16 @@ namespace OnlyFruitsMod.Features.Quests
                 var freshQuest = new ResourceCollectionQuest();
                 if (markAsOnlyFruitQuest)
                 {
+                    var originalReward = this.GetOriginalRewardAmount(oldResourceCollectionQuest);
+                    freshQuest.modData[QOTDOriginalReward] = originalReward.ToString();
                     freshQuest.reward.Value = 0;
-                    freshQuest.reward.WithLockedField(() =>
-                    {
-                        this.CopyResourceCollectionQuest(freshQuest, oldQuest: oldResourceCollectionQuest);
-                    });
                 }
                 else
                 {
-                    this.CopyResourceCollectionQuest(freshQuest, oldQuest: oldResourceCollectionQuest);
+                    freshQuest.reward.Value = this.GetOriginalRewardAmount(oldResourceCollectionQuest);
                 }
+              
+                this.CopyResourceCollectionQuest(freshQuest, oldQuest: oldResourceCollectionQuest);
                 this.ConfigureOnlyFruitsQOTD(freshQuest, markAsOnlyFruitQuest);
                 freshQuest.accepted.Value = quest.accepted.Value;
                 return freshQuest;
