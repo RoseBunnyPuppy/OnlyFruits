@@ -10,7 +10,7 @@ namespace OnlyFruitsMod.Extensions
         public static void LogAssetReady(this Logger monitor, object source, string? assetName)
         {
 #if !DisableDevHelpers
-            monitor.LogDebug($"[{source.GetType().Name}] {assetName} (AssetReady)");
+            monitor.Log($"[{source.GetType().Name}] {assetName} (AssetReady)", LogLevel.Trace);
 #endif
         }
         public static void LogAssetReady(this Logger monitor, object source, IAssetName? assetName) =>
@@ -20,7 +20,7 @@ namespace OnlyFruitsMod.Extensions
         public static void LogAssetRequested(this Logger monitor, object source, string? assetName)
         {
 #if !DisableDevHelpers
-            monitor.LogDebug($"[{source.GetType().Name}] {assetName} (AssetRequested)");
+            monitor.Log($"[{source.GetType().Name}] {assetName} (AssetRequested)", LogLevel.Trace);
 #endif
         }
         public static void LogAssetRequested(this Logger monitor, object source, IAssetName? assetName) =>
@@ -30,7 +30,7 @@ namespace OnlyFruitsMod.Extensions
         public static void LogAssetInvalidated(this Logger monitor, object source, string? assetName)
         {
 #if !DisableDevHelpers
-            monitor.LogDebug($"[{source.GetType().Name}] {assetName} (AssetInvalidated)");
+            monitor.Log($"[{source.GetType().Name}] {assetName} (AssetInvalidated)", LogLevel.Trace);
 #endif
         }
         public static void LogAssetInvalidated(this Logger monitor, object source, IAssetName? assetName) =>

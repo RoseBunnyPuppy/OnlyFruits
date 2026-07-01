@@ -409,6 +409,7 @@ namespace OnlyFruitsMod.ModParts
                 {
                     if (upgradeFrom.Condition.StartsWith("PLAYER_HAS_TRASH_CAN_LEVEL"))
                     {
+                        Logger.Instance.LogDebug($"Disabling trash can asset {key}::{upgradeFrom.Condition}");
                         upgradeFrom.Condition = DisabledCondition;
                     }
                 }
@@ -510,6 +511,9 @@ namespace OnlyFruitsMod.ModParts
             // if there is "original price data" directly stored on the item, use it
             if (item.TryGetDirectlyCachedModDataPrice(out var directPrice))
             {
+                if (priceField.Value != directPrice)
+                    Logger.Instance.LogDebug($"Restoring price of {item.QualifiedItemId} to {directPrice} [cached value]");
+
                 priceField.Value = directPrice;
                 return true;
             }
@@ -520,6 +524,8 @@ namespace OnlyFruitsMod.ModParts
                 // dont update anything if the price is the same
                 if (priceField.Value == assetPrice) return true;
                 
+                Logger.Instance.LogDebug($"Restoring price of {item.QualifiedItemId} to {directPrice} [asset value]");
+
                 // otherwise, use the cached price
                 priceField.Value = assetPrice;
                 return true;
