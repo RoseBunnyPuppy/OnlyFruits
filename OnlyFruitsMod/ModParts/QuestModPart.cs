@@ -30,7 +30,6 @@ namespace OnlyFruitsMod.ModParts
         private readonly LiveQuestPatcher liveQuestPatcher;
         private readonly DailyQuestPatcher dailyQuestPatcher;
 
-        public bool IsVerbose { get; set; } = false;
         private readonly ReloadManager reloadManager = new();
         public bool PreloadAssets { get; set; } = PreloadConfiguration.Quests;
         public IDictionary<string, string>? CachedQuestData { get; private set; }
@@ -52,7 +51,6 @@ namespace OnlyFruitsMod.ModParts
                 dailyQuestRegenerator
             );
             
-            if (this.IsVerbose) this.monitor.LogDebug($"[{this.GetType().Name}] EnqueueingReload FirstLoad.");
             this.reloadManager.EnqueueReload();
         }
 
@@ -145,12 +143,10 @@ namespace OnlyFruitsMod.ModParts
 
             if (!this.reloadManager.ShouldApplyLiveData)
             {
-                if (this.IsVerbose) this.monitor.LogDebug($"[{this.GetType().Name}] We arent marked as 'able to override' yet, so reload!");
                 this.Context.Helper.GameContent.LoadAsset(HardcodedAssetPaths.DataQuests);
                 return;
             }
 
-            if (this.IsVerbose) this.monitor.LogDebug($"[{this.GetType().Name}] Got beyond the 'ShouldApply' check");
             var questData = this.CachedQuestData;
             if (questData == null) return;
 
@@ -169,7 +165,6 @@ namespace OnlyFruitsMod.ModParts
        
         private void GameLoop_DayStarted(object? sender, DayStartedEventArgs e)
         {
-            if (this.IsVerbose) this.monitor.LogDebug("Day started!");
             // abort if we arent in a game
             if (!Game1.hasLoadedGame) return;
 
@@ -178,12 +173,10 @@ namespace OnlyFruitsMod.ModParts
 
             if (!this.reloadManager.ShouldApplyLiveData)
             {
-                if (this.IsVerbose) this.monitor.LogDebug($"[{this.GetType().Name}] We arent marked as 'able to override' yet, so reload!");
                 this.Context.Helper.GameContent.LoadAsset(HardcodedAssetPaths.DataQuests);
                 return;
             }
 
-            if (this.IsVerbose) this.monitor.LogDebug($"[{this.GetType().Name}] Got beyond the 'ShouldApply' check");
             var questData = this.CachedQuestData;
             if (questData == null) return;
 
