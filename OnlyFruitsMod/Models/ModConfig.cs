@@ -32,6 +32,8 @@
     {
 #if DEBUGPUBLISH
         public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.Error;
+#elif RELEASEPUBLISH
+        public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.Error;
 #elif DEBUG
         public const OnlyFruitsLogLevels DefaultLogLevel = OnlyFruitsLogLevels.All;
 #endif
