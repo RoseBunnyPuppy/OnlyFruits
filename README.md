@@ -40,6 +40,9 @@ For a few of the vanilla quests that have requirements that can either be a frui
 - Caroline's [Island Ingredients quest](https://stardewvalleywiki.com/Quests#Island_Ingredients) now has the following possible requirements:
   - Pineapple
 
+#### Daily Quests
+Non-fruit daily quests will have their monetary rewards set to 0. The reward will be restored if the challenge is disabled.
+
 ### Trash Can Behavior
 Because not every item has a changeable sell price (e.g. trinkets, boots, weapons), the upgraded trash cans can be used to get money from them. I've disabled the upgraded trash cans, and if a save is loaded with an upgraded trash can, your trash can will be downgraded to the basic one that doesnt give any monies upon trashing! 
 If you later disable the mod, then your original trash can level will be restored (i.e. if you had a gold trash can before enabling the mod, you will have a gold trash can once it is disabled)

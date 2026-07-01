@@ -6,7 +6,7 @@
   "rosebunnypuppy.onlyfruits.ui.challenge-warning.disabled_fresh": "The Only Fruits challenge has been disabled!",
   "rosebunnypuppy.onlyfruits.ui.challenge-warning.disabled": "You are NOT playing with the Only Fruits challenge!",
 
-  "rosebunnypuppy.onlyfruits.ui.version-string": "version {{ModVersion}}",
+  "rosebunnypuppy.onlyfruits.ui.version-string": "version {{ModVersion}}.  is active: {{IsEnabled}}",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.label": "Sellable Configuration",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.tooltip": "Configure the stuff that can be sold.",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items.label": "Meme Items",
