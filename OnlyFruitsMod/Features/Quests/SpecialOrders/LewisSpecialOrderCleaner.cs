@@ -59,6 +59,10 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
 
         public void PatchAsset(SpecialOrderData? specialOrderData)
         {
+            const string SpringSeasonCropKey = "season_spring";
+            const string SummerSeasonCropKey = "season_summer";
+            const string FallSeasonCropKey = "season_fall";
+
             if (specialOrderData == null) return;
 
             var randomizedCrops = specialOrderData.RandomizedElements.GetByName(HardcodedQuestConstants.RandomizedElementNames.Crop);
@@ -66,9 +70,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
 
             // option 1: remove 'season_spring' because no fruits in it
             // option 2: Replace with  "PICK_ITEM Strawberry"
-            const string SpringSeasonCropKey = "season_spring";
-            const string SummerSeasonCropKey = "season_summer";
-            const string FallSeasonCropKey = "season_fall";
+           
             if (!randomizedCrops.Values.TryGetSingleByRequiredTag(SpringSeasonCropKey, out var springElement))
             {
                 Logger.Instance.Monitor.Log($"Failed to find the 'reuired tag' for season '{SpringSeasonCropKey}' for Lewis's special order", LogLevel.Error);

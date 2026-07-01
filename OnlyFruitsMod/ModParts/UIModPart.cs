@@ -30,8 +30,8 @@ namespace OnlyFruitsMod.ModParts
         }
 
 
-     
-        EnumChoiceMap<QuestReplacementModes> CropOrderChoiceMap = EnumChoiceMap.Create(new Dictionary<QuestReplacementModes, string>()
+
+        readonly EnumChoiceMap<QuestReplacementModes> CropOrderChoiceMap = EnumChoiceMap.Create(new Dictionary<QuestReplacementModes, string>()
         {
             [QuestReplacementModes.NoMonetaryReward] = "no-money",
             [QuestReplacementModes.SwapWithFruits] = "fruit-crops",
@@ -39,6 +39,19 @@ namespace OnlyFruitsMod.ModParts
         {
             QuestReplacementModes.NoMonetaryReward,
             QuestReplacementModes.SwapWithFruits,
+        });
+        readonly EnumChoiceMap<OnlyFruitsLogLevels> LogLevelsChoiceMap = EnumChoiceMap.Create(new Dictionary<OnlyFruitsLogLevels, string>()
+        {
+            [OnlyFruitsLogLevels.None] = "none",
+            [OnlyFruitsLogLevels.Debug] = "debug",
+            [OnlyFruitsLogLevels.Info] = "info",
+            [OnlyFruitsLogLevels.Error] = "error",
+        }, OnlyFruitsLogLevels.Error, new OnlyFruitsLogLevels[]
+        {
+            OnlyFruitsLogLevels.None,
+            OnlyFruitsLogLevels.Debug,
+            OnlyFruitsLogLevels.Info,
+            OnlyFruitsLogLevels.Error,
         });
 
 
@@ -143,6 +156,12 @@ namespace OnlyFruitsMod.ModParts
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.other-section.option-allow-trashcan-upgrades",
                     getValue: () => configInstance.Config.AllowTrashcanUpgrade,
                     setValue: value => configInstance.Config.AllowTrashcanUpgrade = value
+                )
+                .AddTextOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.other-section.option-logging-verbosity",
+                    getValue: () => LogLevelsChoiceMap.GetStringValue(configInstance.Config.LoggingLevel),
+                    setValue: value => configInstance.Config.LoggingLevel = LogLevelsChoiceMap.GetEnumValue(value),
+                    allowedValues: LogLevelsChoiceMap.GetAllowed()
                 )
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.challenge-section")
                 .AddBoolOption(

@@ -5,6 +5,25 @@
         NoMonetaryReward = 2,
         SwapWithFruits = 3,
     }
+    public enum OnlyFruitsLogLevels
+    {
+        /// <summary>
+        ///   Show none.
+        /// </summary>
+        None = 1,
+        /// <summary>
+        ///   Show errors, info, and debug.
+        /// </summary>
+        Debug = 2,
+        /// <summary>
+        ///   Show errors and info.
+        /// </summary>
+        Info = 3,
+        /// <summary>
+        ///   Show only errors.
+        /// </summary>
+        Error = 4,
+    }
     public sealed class ModConfig
     {
         #region "Sellable Section"
@@ -99,6 +118,14 @@
         /// </summary>
         /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-allow-trashcan-upgrades</remarks>
         public bool AllowTrashcanUpgrade { get; set; } = false;
+
+        /// <summary>
+        ///   Configures how verbose the logging is.
+        /// </summary>
+        /// <remarks>rosebunnypuppy.onlyfruits.ui.other-section.option-logging-verbosity</remarks>
+        public OnlyFruitsLogLevels LoggingLevel { get; set; } = OnlyFruitsLogLevels.Error;
+
+
         #endregion "Other Section"
 
         #region "Challenge Section"
