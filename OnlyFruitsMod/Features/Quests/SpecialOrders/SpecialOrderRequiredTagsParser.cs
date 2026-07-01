@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlyFruitsMod.Features.Quests
+namespace OnlyFruitsMod.Features.Quests.SpecialOrders
 {
     public class NotImplementedSpecialOrderTag : ISpecialOrderTag
     {

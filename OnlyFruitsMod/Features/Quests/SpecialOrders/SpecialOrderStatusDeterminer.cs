@@ -4,7 +4,7 @@ using OnlyFruitsMod.Features.Quests.Models;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 
-namespace OnlyFruitsMod.Features.Quests
+namespace OnlyFruitsMod.Features.Quests.SpecialOrders
 {
     public class SpecialOrderStatusDeterminer
     {

@@ -6,6 +6,7 @@ using OnlyFruitsMod.Features.Fruits;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Quests;
 using OnlyFruitsMod.Features.Quests.Models;
+using OnlyFruitsMod.Features.Quests.SpecialOrders;
 using OnlyFruitsMod.Features.ReloadHelpers;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
@@ -19,6 +20,7 @@ using StardewValley.Quests;
 using StardewValley.SpecialOrders;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using static System.Environment;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -28,7 +30,10 @@ namespace OnlyFruitsMod.ModParts
     public class SpecialOrderModPart : ModPartBase
     {
         public bool PreloadAssets { get; set; } = PreloadConfiguration.SpecialOrders;
-        
+
+
+        private readonly SpecialOrderCleanerDriver specialOrderCleaner = new();
+
         private readonly ReloadManager reloadManager = new();
         private readonly SpecialOrderStatusDeterminer questPatchStatusHelper;
 
@@ -39,7 +44,6 @@ namespace OnlyFruitsMod.ModParts
         /// </summary>
         private Dictionary<string, string> CachedSpecialOrderStrings { get; set; } = new Dictionary<string, string>();
 
-        private readonly LewisCropRemapper lewisCropRemapper = new();
         private record SpecialOrderReward(SpecialOrderData SpecialOrder, SpecialOrderRewardData RewardData);
 
         public SpecialOrderModPart(
@@ -96,32 +100,6 @@ namespace OnlyFruitsMod.ModParts
 
         #region "Asset Patching"
 
-        private void PatchAsset(SpecialOrderData specialOrderData, OrderPatchingFlavors flavor)
-        {
-            switch (flavor)
-            {
-                case OrderPatchingFlavors.NonFruity:
-                    QuestRewardHelper.Instance.SetMoneyRewardToZero(specialOrderData);
-                    return;
-                case OrderPatchingFlavors.NonFruityQi:
-                case OrderPatchingFlavors.PotentiallyNonFruityQi:
-                    QuestRewardHelper.Instance.SetGemRewardToZero(specialOrderData);
-                    QuestRewardHelper.Instance.SetMoneyRewardToZero(specialOrderData);
-                    return;
-                case OrderPatchingFlavors.LewisSpecialOrder:
-                    this.ModifyLewisSpecialOrderAssets(specialOrderData);
-                    return;
-                case OrderPatchingFlavors.CarolineSpecialOrder:
-                    this.ModifyCarolineSpecialOrderAssets(specialOrderData);
-                    return;
-                case OrderPatchingFlavors.DontPatch: 
-                    return;
-                default:
-                    this.monitor.Log($"Unsuppored asset patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
-                    return;
-            }
-        }
-
         private void Content_AssetReady(object? sender, AssetReadyEventArgs e)
         {
             if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataSpecialOrders))
@@ -144,7 +122,7 @@ namespace OnlyFruitsMod.ModParts
                     foreach (var (questId, specialOperationData) in data)
                     {
                         var flavor = this.questPatchStatusHelper.GetPatchingFlavor(questId);
-                        this.PatchAsset(specialOperationData, flavor);
+                        this.specialOrderCleaner.PatchAsset(specialOperationData, flavor);
                     }
                    
                 });
@@ -159,99 +137,12 @@ namespace OnlyFruitsMod.ModParts
             }
         }
 
-        private void ModifyCarolineSpecialOrderAssets(SpecialOrderData? specialOrderData)
-        {
-            if (specialOrderData == null) return;
-
-            var randomizedCrops = specialOrderData.RandomizedElements.GetByName(HardcodedQuestConstants.RandomizedElementNames.Crop);
-            if (randomizedCrops == null) return;
-            var element = randomizedCrops.Values.Single();
-            element.Value = PickItemHelper.Instance.Serialize(new string[] {
-                "Pineapple",
-            });
-
-
-        }
-        private void ModifyLewisSpecialOrderAssets(SpecialOrderData? specialOrderData)
-        {
-            if (specialOrderData == null) return;
-
-            var randomizedCrops = specialOrderData.RandomizedElements.GetByName(HardcodedQuestConstants.RandomizedElementNames.Crop);
-            if (randomizedCrops == null) return;
-
-            // option 1: remove 'season_spring' because no fruits in it
-            // option 2: Replace with  "PICK_ITEM Strawberry"
-            var springElement = randomizedCrops.Values.ExpectSingleByRequiredTag("season_spring");
-            springElement.Value = PickItemHelper.Instance.Serialize(new string[] {
-                "Strawberry",
-            });
-
-            // (season_summer) Replace with  "PICK_ITEM Blueberry, Melon, Hot Pepper"
-            var summerElement = randomizedCrops.Values.ExpectSingleByRequiredTag("season_summer");
-            summerElement.Value = PickItemHelper.Instance.Serialize(new string[] {
-                "Blueberry",
-                "Melon",
-                "Hot Pepper",
-            });
-
-            // (season_fall) Replace with "PICK_ITEM Cranberries, Grape"
-            var fallElement = randomizedCrops.Values.ExpectSingleByRequiredTag("season_fall");
-            fallElement.Value = PickItemHelper.Instance.Serialize(new string[] {
-                "Cranberries",
-                "Grape",
-            });
-
-        }
-
-
+       
+       
         #endregion "Asset Patching"
 
 
         #region "Live Data Replacing"
-        private void ModifyLewisSpecialOrder(SpecialOrder specialOrder)
-        {
-            var selectedCrop = specialOrder.preSelectedItems[HardcodedQuestConstants.RandomizedElementNames.Crop];
-            if (selectedCrop == null) throw new InvalidOperationException();
-            var updatedCropKey = lewisCropRemapper.GetFruitCrop(selectedCrop, specialOrder.generationSeed.Value);
-            if (updatedCropKey == selectedCrop) return;
-            specialOrder.preSelectedItems[HardcodedQuestConstants.RandomizedElementNames.Crop] = updatedCropKey;
-        }
-        private void ModifyCarolineSpecialOrder(SpecialOrder specialOrder)
-        {
-            const string PineappleCropId = "(O)832";
-            var selectedCrop = specialOrder.preSelectedItems[HardcodedQuestConstants.RandomizedElementNames.Crop];
-            if (selectedCrop == null) throw new InvalidOperationException();
-            if (selectedCrop == PineappleCropId) return;
-            specialOrder.preSelectedItems[HardcodedQuestConstants.RandomizedElementNames.Crop] = PineappleCropId;
-        }
-
-        private void ModifyLiveSpecialOrder(SpecialOrder specialOrder, OrderPatchingFlavors flavor)
-        {
-            switch (flavor)
-            {
-                case OrderPatchingFlavors.DontPatch:
-                    QuestRewardHelper.Instance.RestoreMoneyReward(specialOrder);
-                    QuestRewardHelper.Instance.RestoreGemReward(specialOrder);
-                    return;
-                case OrderPatchingFlavors.NonFruity:
-                    QuestRewardHelper.Instance.SetMoneyRewardToZero(specialOrder);
-                    return;
-                case OrderPatchingFlavors.NonFruityQi:
-                case OrderPatchingFlavors.PotentiallyNonFruityQi:
-                    QuestRewardHelper.Instance.SetMoneyRewardToZero(specialOrder);
-                    QuestRewardHelper.Instance.SetGemRewardToZero(specialOrder);
-                    return;
-                case OrderPatchingFlavors.LewisSpecialOrder:
-                    this.ModifyLewisSpecialOrder(specialOrder);
-                    return;
-                case OrderPatchingFlavors.CarolineSpecialOrder:
-                    this.ModifyCarolineSpecialOrder(specialOrder);
-                    return;
-                default:
-                    this.monitor.Log($"Unsuppored live patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
-                    return;
-            }
-        }
 
 
         private void OverrideQuestRewards()
@@ -271,7 +162,7 @@ namespace OnlyFruitsMod.ModParts
 
                 var questId = specialOrder.questKey.ToString();
                 var flavor = this.questPatchStatusHelper.GetPatchingFlavor(questId);
-                this.ModifyLiveSpecialOrder(specialOrder, flavor);
+                this.specialOrderCleaner.PatchLiveData(specialOrder, flavor);
             }
         }
         private void GameLoop_SaveLoaded(object? sender, SaveLoadedEventArgs e)
