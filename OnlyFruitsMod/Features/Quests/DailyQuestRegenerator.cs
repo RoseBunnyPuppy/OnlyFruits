@@ -41,6 +41,10 @@ namespace OnlyFruitsMod.Features.Quests
             })))))));
 
 
+            /* 
+             * NOTE: the following grossness is copied from the decompiled 
+             * source of 'SlayMonsterQuest::loadQuestInfo
+             */
             freshQuest.parts.Clear();
             freshQuest.parts.AddRange(oldQuest.parts.SkipLast(1));
             freshQuest.parts.Add(new DescriptionElement("Strings\\StringsFromCSFiles:FishingQuest.cs.13274", freshQuest.reward.Value));
@@ -77,7 +81,10 @@ namespace OnlyFruitsMod.Features.Quests
                 freshQuest.loadQuestInfo();
             })))))));
 
-
+            /* 
+             * NOTE: the following grossness is copied from the decompiled 
+             * source of 'ResourceCollectionQuest::loadQuestInfo
+             */
             Item item = ItemRegistry.Create(freshQuest.ItemId.Value);
             freshQuest.parts.Clear();
             freshQuest.parts.Add(oldQuest.parts[0]);

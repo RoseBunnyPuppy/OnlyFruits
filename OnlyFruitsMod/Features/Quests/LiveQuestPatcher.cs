@@ -7,7 +7,7 @@ namespace OnlyFruitsMod.Features.Quests
 {
     public class LiveQuestPatcher
     {
-        public bool IsVerbose { get; set; } = true;
+        public bool IsVerbose { get; set; } = false;
         private readonly IMonitor monitor;
         private readonly IQuestPatchTester questPatchTester;
         private readonly IDailyQuestRegenerator dailyQuestRegenerator;
@@ -40,12 +40,10 @@ namespace OnlyFruitsMod.Features.Quests
                 // if we are supposed to patch it, then do nothing
                 if (this.questPatchTester.IsPatchingDailyQuest())
                 {
-                    this.monitor.LogDebug($"old: OF -> new: OF.  Doing nothing");
                     return false;
                 }
 
                 // otherwise, reset the qotd
-                this.monitor.LogDebug($"old: OF -> new: real.  regenerating [false]");
                 regeneratedQuest = this.dailyQuestRegenerator.RegenerateQuest(quest, false);
                 return true;
             }
@@ -55,11 +53,9 @@ namespace OnlyFruitsMod.Features.Quests
                 // if we arent supposed to patch it, then do nothing
                 if (!this.questPatchTester.IsPatchingDailyQuest())
                 {
-                    this.monitor.LogDebug($"old: real -> new: real.  Doing nothing");
                     return false;
                 }
 
-                this.monitor.LogDebug($"old: real -> new: OF.  regenerating [true]");
                 regeneratedQuest = this.dailyQuestRegenerator.RegenerateQuest(quest, true);
                 return true;
             }
