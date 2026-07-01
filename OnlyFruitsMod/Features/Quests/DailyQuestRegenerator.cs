@@ -140,7 +140,7 @@ namespace OnlyFruitsMod.Features.Quests
                 freshQuest.accepted.Value = quest.accepted.Value;
                 return freshQuest;
             }
-            // broken
+            // should be good (7/1/2026)
             else if (quest is SlayMonsterQuest oldSlayMonsterQuest)
             {
                 var freshQuest = new SlayMonsterQuest();
@@ -160,7 +160,7 @@ namespace OnlyFruitsMod.Features.Quests
                 freshQuest.accepted.Value = quest.accepted.Value;
                 return freshQuest;
             }
-            // broken
+            // should be good (7/1/2026)
             else if (quest is ResourceCollectionQuest oldResourceCollectionQuest)
             {
                 var freshQuest = new ResourceCollectionQuest();
