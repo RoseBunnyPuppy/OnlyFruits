@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OnlyFruitsMod.Features.ReloadHelpers
 {
-    public enum ReloadActions
-    {
-        Default = 0,
-        ReApply = 1,
-    }
+   
     public class ReloadManager
     {
-        public ReloadActions ReloadAction { get; set; } = ReloadActions.Default;
+
+        private enum ReloadActions
+        {
+            Default = 0,
+            ReApply = 1,
+        }
+        private ReloadActions ReloadAction { get; set; } = ReloadActions.Default;
 
         /// <summary>
         ///   Returns true if we need to reload the data.
@@ -24,6 +27,8 @@ namespace OnlyFruitsMod.Features.ReloadHelpers
             this.ReloadAction = ReloadActions.Default;
             return true;
         }
+
+        public bool ShouldApplyLiveData => this.ReloadAction == ReloadActions.Default;
 
         /// <summary>
         ///   Mark the data as needing to be reloaded.

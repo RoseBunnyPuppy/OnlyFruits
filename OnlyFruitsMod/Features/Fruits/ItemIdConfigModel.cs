@@ -5,18 +5,22 @@
         /// <summary>
         ///   Non-fruit items we are allowing.
         /// </summary>
-        public HashSet<string> MemeItemIds { get; set; } = new HashSet<string>();
+        public HashSet<string> MemeFullItemIds { get; set; } = new();
 
         /// <summary>
-        ///   Non-fruit items that ConcernedApe shoulda treated as fruit.
+        ///   Non-fruit items that ConcernedApe should've treated as fruit.
         /// </summary>
-        public HashSet<string> ShouldBeFruitItemIds { get; set; } = new HashSet<string>();
+        public HashSet<string> ShouldBeFruitFullItemIds { get; set; } = new();
 
         /// <summary>
-        ///   Items we exclude, regardless of whether they are a fruit or derived fruit.
+        ///   The 'full' ids of items to exclude, regardless of whether they are a fruit or derived fruit.
         /// </summary>
-        public HashSet<string> ExplicitlyExcluded { get; set; } = new HashSet<string>();
-        public HashSet<string> ArtisinalItemIds { get; set; } = new HashSet<string>();
+        public HashSet<string> ExplicitlyExcludedFullItemIds { get; set; } = new();
+
+        /// <summary>
+        ///   The 'full' ids of artisinal items to allow.
+        /// </summary>
+        public HashSet<string> ArtisinalFullItemIds { get; set; } = new();
     }
 
 }

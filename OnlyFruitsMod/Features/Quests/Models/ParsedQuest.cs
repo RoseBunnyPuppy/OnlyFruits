@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace OnlyFruitsMod.Models
+namespace OnlyFruitsMod.Features.Quests.Models
 {
     public class ParsedQuest
     {

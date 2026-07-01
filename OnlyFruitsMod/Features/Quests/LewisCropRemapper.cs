@@ -1,4 +1,5 @@
 ﻿using OnlyFruitsMod.Features.ItemIds;
+using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Infrastructure;
 using StardewValley;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ namespace OnlyFruitsMod.Features.Quests
    
     public class LewisCropRemapper
     {
-        const string CropPrefix = ItemIdPrefixes.OPrefix;
+        const string CropPrefix = ItemIdPrefixes.Objects;
         private enum LewisSeasons
         {
             Spring,
@@ -64,6 +65,7 @@ namespace OnlyFruitsMod.Features.Quests
         }
         public string GetFruitCrop(string key, int seed)
         {
+            
             if (!PrefixStripper.Instance.TryStripPrefix(key, CropPrefix, out var sansPrefix))
             {
                 Debugger.Break();
@@ -73,7 +75,7 @@ namespace OnlyFruitsMod.Features.Quests
             if (this.CropToSeasonMap.TryGetValue(sansPrefix, out var mappedInfo))
                 return this.GetRandomChoice(seed, key, mappedInfo);
 
-            var cropInfo = ItemRegistry.GetData(sansPrefix);
+            var cropInfo = ItemRegistry.GetData(key);
             if (cropInfo == null) throw new InvalidOperationException($"Unexpected item id: {key}");
             if (this.CropToSeasonMap.TryGetValue(cropInfo.InternalName, out var mappedNameInfo))
                 return this.GetRandomChoice(seed, key, mappedNameInfo);

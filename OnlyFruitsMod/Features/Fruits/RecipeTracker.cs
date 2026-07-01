@@ -1,13 +1,4 @@
-﻿using OnlyFruitsMod.Models;
-using StardewModdingAPI.Events;
-using StardewValley.GameData.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlyFruitsMod.Features.Fruits
+﻿namespace OnlyFruitsMod.Features.Fruits
 {
     
     public class RecipeTracker
@@ -20,17 +11,15 @@ namespace OnlyFruitsMod.Features.Fruits
             this.Lookups.Clear();
         }
 
-        public void LoadFromAssetEvent(AssetRequestedEventArgs e)
+        public void LoadRecipeMap(IDictionary<string, string> recipeMap)
         {
-            e.Edit(asset =>
-            {
                 this.Clear();
-                var data = asset.AsDictionary<string, string>().Data;
-                foreach ((string itemID, string itemData) in data)
+                foreach (var (recipeId, rawRecipe) in recipeMap)
                 {
-                    this.Lookups[itemID] = ParsedRecipe.Parse(itemData);
+                    // dont parse wonky recipes
+                    if (!ParsedRecipe.TryParse(rawRecipe, out var recipe)) continue;
+                    this.Lookups[recipeId] = recipe;
                 }
-            });
         }
     }
 }

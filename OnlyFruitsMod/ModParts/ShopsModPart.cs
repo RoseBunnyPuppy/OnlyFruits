@@ -45,8 +45,12 @@ namespace OnlyFruitsMod.ModParts
 
         private bool ShouldPatchShop(string shopId)
         {
+            // dont patch if the challenge isnt enabled.
+            if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
+
             // dont patch if restoring item prices
             if (this.configInstance.Config.RestoreAllPrices) return false;
+
             // dont patch if we arent patching non-fruity shops
             if (!this.configInstance.Config.PatchNonFruityShopItems) return false;
 

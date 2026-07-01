@@ -1,4 +1,5 @@
 ﻿using OnlyFruitsMod.Features.ModConfiguration;
+using OnlyFruitsMod.Features.PerSaveChallengeInformation;
 using OnlyFruitsMod.Features.Quests.Models;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
@@ -9,19 +10,24 @@ namespace OnlyFruitsMod.Features.Quests
     {
         private readonly ModConfigInstance configInstance;
         public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; }
+        public PerSaveChallengeInformationInstance PerSaveChallengeInstance { get; }
 
         public SpecialOrderStatusDeterminer(
             ModConfigInstance configInstance,
-            SpecialOrderKeysConfigModel specialOrderKeysConfigModel
+            SpecialOrderKeysConfigModel specialOrderKeysConfigModel,
+            PerSaveChallengeInformationInstance perSaveChallengeInstance
         )
         {
             this.configInstance = configInstance;
             SpecialOrderKeysConfigModel = specialOrderKeysConfigModel;
+            PerSaveChallengeInstance = perSaveChallengeInstance;
         }
 
 
         public OrderPatchingFlavors GetPatchingFlavor(string questId)
         {
+            // dont patch if the challenge isnt enabled.
+            if (!this.PerSaveChallengeInstance.IsChallengeEnabled) return OrderPatchingFlavors.DontPatch;
             // if we are restoring the quests, don't patch anything
             if (this.configInstance.Config.RestoreAllQuestRewards) return OrderPatchingFlavors.DontPatch;
             // if this is a non-fruity quest

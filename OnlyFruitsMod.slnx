@@ -1,3 +1,9 @@
 <Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="DebugPublish" />
+    <BuildType Name="Release" />
+    <BuildType Name="ReleasePublish" />
+  </Configurations>
   <Project Path="OnlyFruitsMod/OnlyFruitsMod.csproj" />
 </Solution>

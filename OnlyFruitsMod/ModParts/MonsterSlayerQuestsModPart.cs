@@ -52,7 +52,8 @@ namespace OnlyFruitsMod.ModParts
 
         private bool ShouldPatch(string slayerKey)
         {
-
+            // dont patch if the challenge isnt enabled.
+            if (!this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return false;
             // dont patch if we are restoring everything
             if (this.configInstance.Config.RestoreAllQuestRewards) return false;
             // dont patch if we _ARENT_ patching non-fruity slayer quests

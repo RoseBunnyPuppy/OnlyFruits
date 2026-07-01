@@ -1,6 +1,8 @@
 ﻿using Force.DeepCloner;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
+using Netcode;
 using OnlyFruitsMod.Extensions;
+using OnlyFruitsMod.Features.Fruits;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Quests;
 using OnlyFruitsMod.Features.Quests.Models;
@@ -9,8 +11,6 @@ using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
-using Netcode;
-using Newtonsoft.Json.Linq;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -32,7 +32,7 @@ namespace OnlyFruitsMod.ModParts
         private readonly ReloadManager reloadManager = new();
         private readonly SpecialOrderStatusDeterminer questPatchStatusHelper;
 
-        public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; } = DefaultSpecialOrderKeysProvider.Create();
+        public SpecialOrderKeysConfigModel SpecialOrderKeysConfigModel { get; }
 
         /// <summary>
         ///   The cached version of the SpecialOrderStrings.
@@ -42,21 +42,29 @@ namespace OnlyFruitsMod.ModParts
         private readonly LewisCropRemapper lewisCropRemapper = new();
         private record SpecialOrderReward(SpecialOrderData SpecialOrder, SpecialOrderRewardData RewardData);
 
-        static Regex RexTextMatch = new Regex("\\[([^\\]]+)\\]", RegexOptions.Compiled);
-
         public SpecialOrderModPart(
             ModPartContext context
         ) : base(context)
         {
-            this.questPatchStatusHelper = new SpecialOrderStatusDeterminer(configInstance, this.SpecialOrderKeysConfigModel);
+            // load config definition assets
+            this.SpecialOrderKeysConfigModel = this.helper.ModContent.Load<SpecialOrderKeysConfigModel>("assets/fruity_special_order_keys.json");
+
+            // 
+            this.questPatchStatusHelper = new SpecialOrderStatusDeterminer(
+                configInstance, 
+                this.SpecialOrderKeysConfigModel,
+                this.Context.PerSaveChallengeInstance
+            );
         }
 
         /// <inheritdoc/>
         protected override void AttachListeners()
         {
             base.AttachListeners();
+            helper.Events.Content.AssetReady += Content_AssetReady;
             helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
         }
+
 
         /// <inheritdoc/>
         protected override void LoadNeededAssets()
@@ -88,28 +96,42 @@ namespace OnlyFruitsMod.ModParts
 
         #region "Asset Patching"
 
-        private void PatchAsset(string questId, SpecialOrderData specialOrderData, OrderPatchingFlavors flavor)
+        private void PatchAsset(SpecialOrderData specialOrderData, OrderPatchingFlavors flavor)
         {
             switch (flavor)
             {
                 case OrderPatchingFlavors.NonFruity:
-                    QuestRewardHelper.Instance.SetMoneyRewardToZero(questId, specialOrderData);
+                    QuestRewardHelper.Instance.SetMoneyRewardToZero(specialOrderData);
                     return;
                 case OrderPatchingFlavors.NonFruityQi:
                 case OrderPatchingFlavors.PotentiallyNonFruityQi:
                     QuestRewardHelper.Instance.SetGemRewardToZero(specialOrderData);
-                    QuestRewardHelper.Instance.SetMoneyRewardToZero(questId, specialOrderData);
+                    QuestRewardHelper.Instance.SetMoneyRewardToZero(specialOrderData);
                     return;
                 case OrderPatchingFlavors.LewisSpecialOrder:
-                    this.ModifyLewisSpecialOrderAssets(questId, specialOrderData);
+                    this.ModifyLewisSpecialOrderAssets(specialOrderData);
                     return;
                 case OrderPatchingFlavors.CarolineSpecialOrder:
-                    this.ModifyCarolineSpecialOrderAssets(questId, specialOrderData);
+                    this.ModifyCarolineSpecialOrderAssets(specialOrderData);
                     return;
-                case OrderPatchingFlavors.DontPatch: return;
+                case OrderPatchingFlavors.DontPatch: 
+                    return;
                 default:
-                    Debugger.Break();
-                    throw new NotImplementedException();
+                    this.monitor.Log($"Unsuppored asset patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
+                    return;
+            }
+        }
+
+        private void Content_AssetReady(object? sender, AssetReadyEventArgs e)
+        {
+            if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataSpecialOrders))
+            {
+                this.monitor.LogAssetReady(this, e.NameWithoutLocale);
+                // re-apply the live data changes if needed
+                if (this.reloadManager.ConsumeReload())
+                {
+                    this.OverrideQuestRewards();
+                }
             }
         }
         protected override void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
@@ -122,13 +144,9 @@ namespace OnlyFruitsMod.ModParts
                     foreach (var (questId, specialOperationData) in data)
                     {
                         var flavor = this.questPatchStatusHelper.GetPatchingFlavor(questId);
-                        this.PatchAsset(questId, specialOperationData, flavor);
+                        this.PatchAsset(specialOperationData, flavor);
                     }
-                    // re-apply the live data changes if needed
-                    if (this.reloadManager.ConsumeReload())
-                    {
-                        this.OverrideQuestRewards();
-                    }
+                   
                 });
                
             }
@@ -141,7 +159,7 @@ namespace OnlyFruitsMod.ModParts
             }
         }
 
-        private void ModifyCarolineSpecialOrderAssets(string source, SpecialOrderData? specialOrderData)
+        private void ModifyCarolineSpecialOrderAssets(SpecialOrderData? specialOrderData)
         {
             if (specialOrderData == null) return;
 
@@ -154,7 +172,7 @@ namespace OnlyFruitsMod.ModParts
 
 
         }
-        private void ModifyLewisSpecialOrderAssets(string source, SpecialOrderData? specialOrderData)
+        private void ModifyLewisSpecialOrderAssets(SpecialOrderData? specialOrderData)
         {
             if (specialOrderData == null) return;
 
@@ -192,7 +210,6 @@ namespace OnlyFruitsMod.ModParts
         #region "Live Data Replacing"
         private void ModifyLewisSpecialOrder(SpecialOrder specialOrder)
         {
-
             var selectedCrop = specialOrder.preSelectedItems[HardcodedQuestConstants.RandomizedElementNames.Crop];
             if (selectedCrop == null) throw new InvalidOperationException();
             var updatedCropKey = lewisCropRemapper.GetFruitCrop(selectedCrop, specialOrder.generationSeed.Value);
@@ -208,7 +225,7 @@ namespace OnlyFruitsMod.ModParts
             specialOrder.preSelectedItems[HardcodedQuestConstants.RandomizedElementNames.Crop] = PineappleCropId;
         }
 
-        private void ModifyLiveSpecialOrder(string questId, SpecialOrder specialOrder, OrderPatchingFlavors flavor)
+        private void ModifyLiveSpecialOrder(SpecialOrder specialOrder, OrderPatchingFlavors flavor)
         {
             switch (flavor)
             {
@@ -231,14 +248,20 @@ namespace OnlyFruitsMod.ModParts
                     this.ModifyCarolineSpecialOrder(specialOrder);
                     return;
                 default:
-                    throw new NotImplementedException();
+                    this.monitor.Log($"Unsuppored live patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
+                    return;
             }
         }
 
 
         private void OverrideQuestRewards()
         {
+            // abort if we arent in a game
             if (!Game1.hasLoadedGame) return;
+
+            // do nothing if we dont currently have any per-save data
+            if (!this.Context.PerSaveChallengeInstance.HasPerSaveLoaded) return;
+
             var specialOrders = Game1.player.team.specialOrders;
 
             // modify existing special orders
@@ -248,7 +271,7 @@ namespace OnlyFruitsMod.ModParts
 
                 var questId = specialOrder.questKey.ToString();
                 var flavor = this.questPatchStatusHelper.GetPatchingFlavor(questId);
-                this.ModifyLiveSpecialOrder(questId, specialOrder, flavor);
+                this.ModifyLiveSpecialOrder(specialOrder, flavor);
             }
         }
         private void GameLoop_SaveLoaded(object? sender, SaveLoadedEventArgs e)

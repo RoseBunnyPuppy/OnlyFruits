@@ -6,10 +6,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DebugPublish;ReleasePublish</Configurations>
+	<DefineConstants Condition="'$(Configuration)' == 'DebugPublish'">DisableDevHelpers;DEBUG</DefineConstants>
+	<DefineConstants Condition="'$(Configuration)' == 'ReleasePublish'">DisableDevHelpers</DefineConstants>
   </PropertyGroup>
 	
   <ItemGroup>
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	<PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
   </ItemGroup>
 	
