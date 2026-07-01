@@ -249,3 +249,4 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
 
 dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.IDE0066.severity = none

@@ -1,4 +1,5 @@
 ﻿using OnlyFruitsMod.Extensions;
+using OnlyFruitsMod.Features.Logging;
 using StardewModdingAPI;
 using StardewValley.Quests;
 using System.Diagnostics.CodeAnalysis;
@@ -66,7 +67,7 @@ namespace OnlyFruitsMod.Features.Quests
             // restore the rewards if we arent patching
             if (!this.questPatchTester.IsPatchingQuest(quest.id.Value))
             {
-                if (this.IsVerbose) this.monitor.LogDebug($"Patching {quest.GetDescription()}");
+                if (this.IsVerbose) Logger.Instance.LogDebug($"Patching {quest.GetDescription()}");
                 // if this quest has a numeric reward, dont overwrite it
                 if (quest.moneyReward.Value != 0) return false;
 
@@ -74,7 +75,7 @@ namespace OnlyFruitsMod.Features.Quests
             }
             else
             {
-                if (this.IsVerbose) this.monitor.LogDebug($"Not Patching {quest.GetDescription()}");
+                if (this.IsVerbose) Logger.Instance.LogDebug($"Not Patching {quest.GetDescription()}");
                 // cache the original reward data
                 quest.TrySetCachedModDataQuestReward(quest.moneyReward.Value);
 

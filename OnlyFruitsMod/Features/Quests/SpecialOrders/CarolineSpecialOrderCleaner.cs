@@ -26,7 +26,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             const string PineappleCropId = "(O)832";
             if (!specialOrder.preSelectedItems.TryGetValue(HardcodedQuestConstants.RandomizedElementNames.Crop, out var selectedCrop) || selectedCrop == null)
             {
-                Logger.Instance.Monitor.Log("Failed to find the pre-selected crop for Caroline's quest", LogLevel.Error);
+                Logger.Instance.Log("Failed to find the pre-selected crop for Caroline's quest", LogLevel.Error);
                 return;
             }
             if (selectedCrop == PineappleCropId) return;

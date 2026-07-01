@@ -1,6 +1,7 @@
 ﻿using Netcode;
 using OnlyFruitsMod.Extensions;
 using OnlyFruitsMod.Features.Fruits;
+using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Quests;
 using OnlyFruitsMod.Features.Quests.Models;
@@ -92,7 +93,7 @@ namespace OnlyFruitsMod.ModParts
         {
             if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataQuests))
             {
-                this.monitor.LogAssetReady(this, e.NameWithoutLocale);
+                Logger.Instance.LogAssetReady(this, e.NameWithoutLocale);
                 // re-apply the live data changes if needed
                 if (this.reloadManager.ConsumeReload())
                 {

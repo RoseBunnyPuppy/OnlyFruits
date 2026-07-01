@@ -30,7 +30,7 @@ namespace OnlyFruitsMod.Features.Quests
                 const string ValueKey = "Amount";
                 if (!reward.Data.TryGetValue(ValueKey, out _))
                 {
-                    Logger.Instance.Monitor.Log($"Failed to find the '{ValueKey}' data for the Gem reward for special order {specialOrder.Name}", LogLevel.Error);
+                    Logger.Instance.Log($"Failed to find the '{ValueKey}' data for the Gem reward for special order {specialOrder.Name}", LogLevel.Error);
                     continue;
                 }
 
@@ -184,7 +184,7 @@ namespace OnlyFruitsMod.Features.Quests
                 const string ValueKey = "Amount";
                 if (!reward.Data.TryGetValue(ValueKey, out _))
                 {
-                    Logger.Instance.Monitor.Log($"Failed to find the '{ValueKey}' data for the Money reward for special order {specialOrder.Name}", LogLevel.Error);
+                    Logger.Instance.Log($"Failed to find the '{ValueKey}' data for the Money reward for special order {specialOrder.Name}", LogLevel.Error);
                     continue;
                 }
                 reward.Data[ValueKey] = "0";

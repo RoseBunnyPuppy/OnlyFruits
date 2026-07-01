@@ -2,6 +2,7 @@
 using OnlyFruitsMod.Extensions;
 using OnlyFruitsMod.Features.Fruits;
 using OnlyFruitsMod.Features.ItemIds;
+using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Features.ReloadHelpers;
@@ -401,7 +402,7 @@ namespace OnlyFruitsMod.ModParts
         {
             if (e.NameWithoutLocale.IsEquivalentTo(HardcodedAssetPaths.DataObjects))
             {
-                this.monitor.LogAssetReady(this, e.NameWithoutLocale);
+                Logger.Instance.LogAssetReady(this, e.NameWithoutLocale);
                 // re-apply the live data changes if needed
                 if (this.reloadManager.ConsumeReload())
                 {

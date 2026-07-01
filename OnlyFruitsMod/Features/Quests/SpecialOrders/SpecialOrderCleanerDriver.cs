@@ -27,7 +27,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             }
             else
             {
-                Logger.Instance.Monitor.Log($"Unsuppored asset patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
+                Logger.Instance.Log($"Unsuppored asset patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
                 return;
             }
         }
@@ -43,7 +43,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             }
             else
             {
-                Logger.Instance.Monitor.Log($"Unsuppored live patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
+                Logger.Instance.Log($"Unsuppored live patch status '{flavor}'.  Treating as 'do not patch'", LogLevel.Error);
                 return;
             }
         }

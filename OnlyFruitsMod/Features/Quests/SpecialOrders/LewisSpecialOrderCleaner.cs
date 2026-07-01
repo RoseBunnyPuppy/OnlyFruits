@@ -73,7 +73,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
            
             if (!randomizedCrops.Values.TryGetSingleByRequiredTag(SpringSeasonCropKey, out var springElement))
             {
-                Logger.Instance.Monitor.Log($"Failed to find the 'reuired tag' for season '{SpringSeasonCropKey}' for Lewis's special order", LogLevel.Error);
+                Logger.Instance.Log($"Failed to find the 'reuired tag' for season '{SpringSeasonCropKey}' for Lewis's special order", LogLevel.Error);
             }
             else
             {
@@ -86,7 +86,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             // (season_summer) Replace with  "PICK_ITEM Blueberry, Melon, Hot Pepper"
             if (!randomizedCrops.Values.TryGetSingleByRequiredTag(SummerSeasonCropKey, out var summerElement))
             {
-                Logger.Instance.Monitor.Log($"Failed to find the 'reuired tag' for season '{SummerSeasonCropKey}' for Lewis's special order", LogLevel.Error);
+                Logger.Instance.Log($"Failed to find the 'reuired tag' for season '{SummerSeasonCropKey}' for Lewis's special order", LogLevel.Error);
             }
             else
             {
@@ -101,7 +101,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             // (season_fall) Replace with "PICK_ITEM Cranberries, Grape"
             if (!randomizedCrops.Values.TryGetSingleByRequiredTag(FallSeasonCropKey, out var fallElement))
             {
-                Logger.Instance.Monitor.Log($"Failed to find the 'reuired tag' for season '{FallSeasonCropKey}' for Lewis's special order", LogLevel.Error);
+                Logger.Instance.Log($"Failed to find the 'reuired tag' for season '{FallSeasonCropKey}' for Lewis's special order", LogLevel.Error);
             }
             else
             {
@@ -115,7 +115,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
         {
             if (!specialOrder.preSelectedItems.TryGetValue(HardcodedQuestConstants.RandomizedElementNames.Crop, out var selectedCrop) || selectedCrop == null)
             {
-                Logger.Instance.Monitor.Log("Failed to find the pre-selected crop for Lewis's quest", LogLevel.Error);
+                Logger.Instance.Log("Failed to find the pre-selected crop for Lewis's quest", LogLevel.Error);
                 return;
             }
             if (!this.TryGetFruitCrop(selectedCrop, specialOrder.generationSeed.Value, out var updatedCropKey))
@@ -143,7 +143,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             // get the partial id for the given item
             if (!PrefixStripper.Instance.TryStripPrefix(key, CropPrefix, out var sansPrefix))
             {
-                Logger.Instance.Monitor.Log($"Failed to get the partial id for an id {key}", LogLevel.Error);
+                Logger.Instance.Log($"Failed to get the partial id for an id {key}", LogLevel.Error);
                 fruitCrop = default;
                 return false;
             }
@@ -158,7 +158,7 @@ namespace OnlyFruitsMod.Features.Quests.SpecialOrders
             if (cropInfo == null)
             {
                 fruitCrop = default;
-                Logger.Instance.Monitor.Log($"No item information registered for {key}", LogLevel.Error);
+                Logger.Instance.Log($"No item information registered for {key}", LogLevel.Error);
                 return false;
             }
 
