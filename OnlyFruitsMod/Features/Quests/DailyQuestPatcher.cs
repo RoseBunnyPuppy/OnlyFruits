@@ -14,7 +14,7 @@ namespace OnlyFruitsMod.Features.Quests
 {
     public class DailyQuestPatcher
     {
-        public bool IsVerbose { get; set; } = true;
+        public bool IsVerbose { get; set; } = false;
 
         private readonly IMonitor monitor;
         private readonly IQuestPatchTester questPatchTester;
