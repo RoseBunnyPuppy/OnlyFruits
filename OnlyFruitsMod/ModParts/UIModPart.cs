@@ -64,7 +64,10 @@ namespace OnlyFruitsMod.ModParts
                 })
                 .AddParagraph(
                     i18nKey: "rosebunnypuppy.onlyfruits.ui.version-string",
-                    tokens: new { ModVersion = this.ModManifest.Version }
+                    tokens: () => new { 
+                        ModVersion = this.ModManifest.Version,
+                        IsEnabled = this.Context.PerSaveChallengeInstance.IsChallengeEnabled,
+                    }
                 )
                 // Sellable Configuration
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.sellable-section")
