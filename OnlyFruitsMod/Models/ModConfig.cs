@@ -51,10 +51,10 @@
         public bool AllowSellingAutoDerivedItems { get; set; } = true;
 
         /// <summary>
-        ///   If true, items defined in the "manual artisinal" list are sellable.
+        ///   If true, items defined in the "manual artisanal" list are sellable.
         /// </summary>
-        /// <remarks>rosebunnypuppy.onlyfruits.ui.sellable-section.option-fruity-artisinal-items</remarks>
-        public bool AllowSellingArtisinalItems { get; set; } = true;
+        /// <remarks>rosebunnypuppy.onlyfruits.ui.sellable-section.option-fruity-artisanal-items</remarks>
+        public bool AllowSellingArtisanalItems { get; set; } = true;
 
         /// <summary>
         ///   If true, items that should be considered fruits are sellable.

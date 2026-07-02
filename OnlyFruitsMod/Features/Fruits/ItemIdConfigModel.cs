@@ -18,9 +18,9 @@
         public HashSet<string> ExplicitlyExcludedFullItemIds { get; set; } = new();
 
         /// <summary>
-        ///   The 'full' ids of artisinal items to allow.
+        ///   The 'full' ids of artisanal items to allow.
         /// </summary>
-        public HashSet<string> ArtisinalFullItemIds { get; set; } = new();
+        public HashSet<string> ArtisanalFullItemIds { get; set; } = new();
     }
 
 }
