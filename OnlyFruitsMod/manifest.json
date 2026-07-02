@@ -13,5 +13,8 @@
       "MinimumVersion": "1.16.0"
     }
   ],
-  "UpdateKeys": []
+  "UpdateKeys": [
+    "Nexus:48372",
+    "GitHub:RoseBunnyPuppy/OnlyFruits"
+  ]
 }
