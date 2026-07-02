@@ -2,7 +2,7 @@
 {
   "Name": "Only Fruits",
   "Author": "RoseBunnyPuppy",
-  "Version": "0.0.5",
+  "Version": "0.0.6",
   "Description": "Only Fruits! A mod to enforce the restrictions for Cozyandcaffeinated's series.",
   "UniqueID": "RoseBunnyPuppy.OnlyFruits",
   "EntryDll": "OnlyFruitsMod.dll",
@@ -13,5 +13,8 @@
       "MinimumVersion": "1.16.0"
     }
   ],
-  "UpdateKeys": []
+  "UpdateKeys": [
+    "Nexus:48372",
+    "GitHub:RoseBunnyPuppy/OnlyFruits"
+  ]
 }
