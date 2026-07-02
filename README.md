@@ -20,7 +20,7 @@ This mod sets the sell price (i.e. the amount that a player gets if they try to 
   - Fall Seeds
   - Winter Seeds
   - Warp Totem: Desert
-- The following artisinal goods:
+- The following artisanal goods:
   - Jelly
   - Wine
   - Raisins
