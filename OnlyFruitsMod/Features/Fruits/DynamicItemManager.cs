@@ -162,16 +162,16 @@ namespace OnlyFruitsMod.Features.Fruits
                     }
                 }
             });
-            // add the artisinal items
-            RunBatch("Artisinal items", () =>
+            // add the artisanal items
+            RunBatch("Artisanal items", () =>
             {
-                if (!this.Config.AllowSellingArtisinalItems) return;
+                if (!this.Config.AllowSellingArtisanalItems) return;
 
                 foreach ((string itemID, ObjectData itemData) in data)
                 {
                     ScopedItemId fullItemId = new(ItemIdPrefixes.Objects, itemID);
                     // skip fruits
-                    if (this.IdConfigModel.ArtisinalFullItemIds.Contains(fullItemId.FullId))
+                    if (this.IdConfigModel.ArtisanalFullItemIds.Contains(fullItemId.FullId))
                     {
                         this.AddFullItemId(fullItemId, InclusionReasons.Artisnal);
                         continue;

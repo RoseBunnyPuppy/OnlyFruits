@@ -109,9 +109,9 @@ namespace OnlyFruitsMod.ModParts
                     setValue: value => configInstance.Config.AllowSellingAutoDerivedItems = value
                 )
                 .AddBoolOption(
-                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-fruity-artisinal-items",
-                    getValue: () => configInstance.Config.AllowSellingArtisinalItems,
-                    setValue: value => configInstance.Config.AllowSellingArtisinalItems = value
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-fruity-artisanal-items",
+                    getValue: () => configInstance.Config.AllowSellingArtisanalItems,
+                    setValue: value => configInstance.Config.AllowSellingArtisanalItems = value
                 )
                 // question section
                 .AddSectionTitle("rosebunnypuppy.onlyfruits.ui.questing-section")
