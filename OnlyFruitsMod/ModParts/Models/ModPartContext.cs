@@ -1,6 +1,7 @@
 ﻿using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.PerSaveChallengeInformation;
+using OnlyFruitsMod.Features.UpdateHelpers;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace OnlyFruitsMod.ModParts.Models
         ILogger Logger,
         ModConfigInstance ConfigInstance,
         IManifest ModManifest,
-        PerSaveChallengeInformationInstance PerSaveChallengeInstance
+        PerSaveChallengeInformationInstance PerSaveChallengeInstance,
+        ModUpdateHelper UpdateHelper
     );
 }

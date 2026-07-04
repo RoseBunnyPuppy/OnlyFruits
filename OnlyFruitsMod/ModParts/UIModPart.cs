@@ -6,7 +6,7 @@ using OnlyFruitsMod.ModParts.Models;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Integrations.GenericModConfigMenu;
-using System.Diagnostics;
+using StardewValley;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -64,7 +64,36 @@ namespace OnlyFruitsMod.ModParts
             OnlyFruitsLogLevels.Debug,
         });
 
+        string FormatIsEnabledLine(ITranslationHelper i18n)
+        {
+            const string BaseKey = "rosebunnypuppy.onlyfruits.ui.header-section.is-active";
+            if (!Game1.hasLoadedGame) return i18n.Get($"{BaseKey}.not-in-game");
+            else if (this.Context.PerSaveChallengeInstance.IsChallengeEnabled) return i18n.Get($"{BaseKey}.enabled");
+            return i18n.Get($"{BaseKey}.disabled");
+        }
+        string FormatVersionLine(ITranslationHelper i18n)
+        {
+            return i18n.Get("rosebunnypuppy.onlyfruits.ui.header-section.version-string", new
+            {
 
+                ModVersion = this.ModManifest.Version,
+            });
+        }
+        string FormatUpdateLine(ITranslationHelper i18n)
+        {
+            var updateInfo = this.Context.UpdateHelper.GetUpdateInformation(this.Context.ModManifest.UniqueID);
+            if (updateInfo == null)
+            {
+                return i18n.Get("rosebunnypuppy.onlyfruits.ui.header-section.update-information.latest");
+            }
+            else
+            {
+                return i18n.Get("rosebunnypuppy.onlyfruits.ui.header-section.update-information.updates", new
+                {
+                    Version = updateInfo.Version.ToString(),
+                });
+            }
+        }
         private void GameLoop_GameLaunched(object? sender, GameLaunchedEventArgs e)
         {
             var configMenu = this.helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
@@ -85,10 +114,12 @@ namespace OnlyFruitsMod.ModParts
                     );
                 })
                 .AddParagraph(
-                    i18nKey: "rosebunnypuppy.onlyfruits.ui.version-string",
-                    tokens: () => new { 
-                        ModVersion = this.ModManifest.Version,
-                        IsEnabled = this.Context.PerSaveChallengeInstance.IsChallengeEnabled,
+                    text: i18n =>
+                    {
+                        var versionLine = this.FormatVersionLine(i18n);
+                        var updateLine = this.FormatUpdateLine(i18n);
+                        var enabledStatusLine = this.FormatIsEnabledLine(i18n);
+                        return $"{versionLine}\n{updateLine}\n{enabledStatusLine}";
                     }
                 )
                 // Sellable Configuration
@@ -97,11 +128,6 @@ namespace OnlyFruitsMod.ModParts
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items",
                     getValue: () => configInstance.Config.AllowSellingMemeItems,
                     setValue: value => configInstance.Config.AllowSellingMemeItems = value
-                )
-                .AddBoolOption(
-                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-rainbow-items",
-                    getValue: () => configInstance.Config.AllowSellingRainbowItems,
-                    setValue: value => configInstance.Config.AllowSellingRainbowItems = value
                 )
                 .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-should-be-fruits",

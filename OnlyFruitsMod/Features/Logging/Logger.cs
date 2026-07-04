@@ -78,5 +78,14 @@ namespace OnlyFruitsMod.Features.Logging
 
             this.Monitor.Log(message, level);
         }
+
+
+    
+        public void LogOnce(string message, LogLevel level)
+        {
+            if (!this.CanLog(level)) return;
+
+            this.Monitor.LogOnce(message, level);
+        }
     }
 }
