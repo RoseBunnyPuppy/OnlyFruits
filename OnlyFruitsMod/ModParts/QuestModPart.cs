@@ -29,12 +29,10 @@ namespace OnlyFruitsMod.ModParts
             this.questPatchTester = new DefaultQuestPatchTester(context);
             this.dailyQuestRegenerator = new DailyQuestRegenerator();
             this.liveQuestPatcher = new(
-                this.monitor,
                 this.questPatchTester,
                 dailyQuestRegenerator
             );
             this.dailyQuestPatcher = new(
-                context.Monitor,
                 this.questPatchTester,
                 dailyQuestRegenerator
             );

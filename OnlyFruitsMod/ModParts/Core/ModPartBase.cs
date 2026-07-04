@@ -10,7 +10,6 @@ namespace OnlyFruitsMod.ModParts.Core
     {
         protected ModPartContext Context { get; }
         protected readonly IModHelper helper;
-        protected readonly IMonitor monitor;
         protected readonly ModConfigInstance configInstance;
 
         public ModPartBase(
@@ -19,7 +18,6 @@ namespace OnlyFruitsMod.ModParts.Core
         {
             this.Context = context;
             this.helper = context.Helper;
-            this.monitor = context.Monitor;
             this.configInstance = context.ConfigInstance;
         }
 

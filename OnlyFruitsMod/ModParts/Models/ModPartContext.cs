@@ -1,4 +1,5 @@
-﻿using OnlyFruitsMod.Features.ModConfiguration;
+﻿using OnlyFruitsMod.Features.Logging;
+using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.PerSaveChallengeInformation;
 using StardewModdingAPI;
 using System;
@@ -14,7 +15,7 @@ namespace OnlyFruitsMod.ModParts.Models
     /// </summary>
     public record ModPartContext(
         IModHelper Helper,
-        IMonitor Monitor,
+        ILogger Logger,
         ModConfigInstance ConfigInstance,
         IManifest ModManifest,
         PerSaveChallengeInformationInstance PerSaveChallengeInstance

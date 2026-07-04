@@ -6,7 +6,6 @@ namespace OnlyFruitsMod.Features.Quests
 {
     public class QuestStatusLogger
     {
-        private readonly IMonitor monitor;
         private readonly string source;
         public bool Verbose { get; set; } = true;
 
@@ -14,11 +13,9 @@ namespace OnlyFruitsMod.Features.Quests
         public Dictionary<string, OrderPatchingFlavors?> AssetStatuses { get; } = new();
 
         public QuestStatusLogger(
-            IMonitor monitor,
             string source
         )
         {
-            this.monitor = monitor;
             this.source = source;
         }
 

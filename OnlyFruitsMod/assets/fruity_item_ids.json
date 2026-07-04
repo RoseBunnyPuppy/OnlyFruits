@@ -1,6 +1,13 @@
 ﻿{
   "MemeFullItemIds": [
-    "(O)286"
+    "(O)286",
+    "(O)554",
+    "(O)873"
+  ],
+  "RainbowFullItemId": [
+    "(O)138",
+    "(O)394",
+    "(O)74"
   ],
   "ArtisanalFullItemIds": [
     "(O)344",
@@ -12,9 +19,15 @@
     "(O)417"
   ],
   "ExplicitlyExcludedFullItemIds": [
+    "(O)812",
     "(O)496",
     "(O)497",
     "(O)498",
-    "(O)261"
+    "(O)261",
+    "(O)228",
+    "(O)369",
+    "(O)227",
+    "(O)219",
+    "(O)801"
   ]
 }

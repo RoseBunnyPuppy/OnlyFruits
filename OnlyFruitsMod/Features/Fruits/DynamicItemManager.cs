@@ -13,6 +13,7 @@ namespace OnlyFruitsMod.Features.Fruits
         Fruit = 0x10,
         ShouldBeFruit = 0x15,
         Meme = 0x30,
+        Rainbow = 0x31,
         Artisnal = 0x80,
         Derived = 0x90,
     }
@@ -22,7 +23,6 @@ namespace OnlyFruitsMod.Features.Fruits
         public bool Verbose { get; set; } = false;
 
 
-        private readonly IMonitor monitor;
         private readonly ModConfigInstance configInstance;
         public RecipeTracker CookingRecipes { get; } = new();
         public RecipeTracker CraftingRecipes { get; } = new();
@@ -39,12 +39,10 @@ namespace OnlyFruitsMod.Features.Fruits
 
         public DynamicItemManager(
             ItemIdConfigModel idConfigModel,
-            IMonitor monitor,
             ModConfigInstance configInstance
         )
         {
             this.IdConfigModel = idConfigModel;
-            this.monitor = monitor;
             this.configInstance = configInstance;
         }
 
@@ -158,6 +156,22 @@ namespace OnlyFruitsMod.Features.Fruits
                     if (itemData.Category == StardewValley.Object.FruitsCategory)
                     {
                         this.AddFullItemId(new(ItemIdPrefixes.Objects, itemID), InclusionReasons.Fruit);
+                        continue;
+                    }
+                }
+            });
+            // add the artisanal items
+            RunBatch("Rainbow items", () =>
+            {
+                if (!this.Config.AllowSellingRainbowItems) return;
+
+                foreach ((string itemID, ObjectData itemData) in data)
+                {
+                    ScopedItemId fullItemId = new(ItemIdPrefixes.Objects, itemID);
+                    // skip fruits
+                    if (this.IdConfigModel.RainbowFullItemId.Contains(fullItemId.FullId))
+                    {
+                        this.AddFullItemId(fullItemId, InclusionReasons.Rainbow);
                         continue;
                     }
                 }
