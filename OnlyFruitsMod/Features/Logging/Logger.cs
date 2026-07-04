@@ -12,9 +12,12 @@ namespace OnlyFruitsMod.Features.Logging
     ///     Provides access to a singleton logger so I dont have
     ///   to pass around a <see cref="IMonitor"/> everywhere.
     /// </summary>
-    public class Logger
+    public class Logger : ILogger
     {
-        public static Logger Instance { get; } = new Logger();
+        static Logger FullInstance { get; } = new Logger();
+        public static ILogger Instance => FullInstance;
+
+
 
         public OnlyFruitsLogLevels MaxLogLevel { get; set; } = ModConfig.DefaultLogLevel;
 

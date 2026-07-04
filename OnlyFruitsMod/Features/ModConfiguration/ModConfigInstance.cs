@@ -11,7 +11,6 @@ namespace OnlyFruitsMod.Features.ModConfiguration
     public class ModConfigInstance
     {
         private readonly IModHelper helper;
-        private readonly IMonitor monitor;
 
         /// <summary>
         ///   The current configuration data.
@@ -31,11 +30,9 @@ namespace OnlyFruitsMod.Features.ModConfiguration
 
 
         public ModConfigInstance(
-            IModHelper helper,
-            IMonitor monitor
+            IModHelper helper
         ) {
             this.helper = helper;
-            this.monitor = monitor;
             this.Config = this.helper.ReadConfig<ModConfig>();
             this.PreviousAlwaysAskStatus = this.Config.AlwaysAskWhetherToUseChallenge;
         }

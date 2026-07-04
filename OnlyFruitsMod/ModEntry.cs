@@ -16,26 +16,34 @@ namespace OnlyFruitsMod
             IModHelper helper
         )
         {
-            var configInstance = new ModConfigInstance(
-                helper,
-                this.Monitor
-            );
-            var perSaveChallengeInstance = new PerSaveChallengeInformationInstance(helper);
             var modPartContext = new ModPartContext(
                 helper,
-                this.Monitor,
-                configInstance,
+                Logger.Instance,
+                new ModConfigInstance(helper),
                 this.ModManifest,
-                perSaveChallengeInstance
+                new PerSaveChallengeInformationInstance(helper)
             );
             return modPartContext;
         }
         
+        /// <summary>
+        ///   Configure the <see cref="Logger.Instance"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The instance was an unexpected type. We cannot recover from this.</exception>
+        private void InitializeLogger()
+        {
+            if (Logger.Instance is not Logger fullLogger)
+            {
+                this.Monitor.Log($"Expected the logger to be of type {nameof(Logger)}.  Was actually {Logger.Instance.GetType().FullName}", LogLevel.Error);
+                throw new InvalidOperationException($"Expected the logger to be of type {nameof(Logger)}");
+            }
+            fullLogger.SetMonitor(this.Monitor);
+        }
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Logger.Instance.SetMonitor(this.Monitor);
+            this.InitializeLogger();
 
             var modPartContext = this.BuildPartContext(helper);
             this.ConfigInstance = modPartContext.ConfigInstance;

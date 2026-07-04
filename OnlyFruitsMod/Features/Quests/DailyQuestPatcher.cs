@@ -17,17 +17,14 @@ namespace OnlyFruitsMod.Features.Quests
     {
         public bool IsVerbose { get; set; } = false;
 
-        private readonly IMonitor monitor;
         private readonly IQuestPatchTester questPatchTester;
         private readonly IDailyQuestRegenerator dailyQuestRegenerator;
 
         public DailyQuestPatcher(
-            IMonitor monitor,
             IQuestPatchTester questPatchTester,
             IDailyQuestRegenerator dailyQuestRegenerator
         )
         {
-            this.monitor = monitor;
             this.questPatchTester = questPatchTester;
             this.dailyQuestRegenerator = dailyQuestRegenerator;
         }
