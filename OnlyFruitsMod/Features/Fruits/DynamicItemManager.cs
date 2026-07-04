@@ -23,7 +23,6 @@ namespace OnlyFruitsMod.Features.Fruits
         public bool Verbose { get; set; } = false;
 
 
-        private readonly IMonitor monitor;
         private readonly ModConfigInstance configInstance;
         public RecipeTracker CookingRecipes { get; } = new();
         public RecipeTracker CraftingRecipes { get; } = new();
@@ -40,12 +39,10 @@ namespace OnlyFruitsMod.Features.Fruits
 
         public DynamicItemManager(
             ItemIdConfigModel idConfigModel,
-            IMonitor monitor,
             ModConfigInstance configInstance
         )
         {
             this.IdConfigModel = idConfigModel;
-            this.monitor = monitor;
             this.configInstance = configInstance;
         }
 

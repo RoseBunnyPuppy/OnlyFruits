@@ -2,10 +2,13 @@
 {
     public static class HardcodedModDataKeys
     {
-        public static string OriginalQuestOfTheDayReward { get; } = "RoseBunnyPuppy.OnlyFruits:OriginalQuestOfTheDayReward";
-        public static string IsOnlyFruitsQuestOfTheDay { get; } = "RoseBunnyPuppy.OnlyFruits:IsOnlyFruitsQuestOfTheDay";
-        public static string OriginalTrashCanDataKey { get; } = "RoseBunnyPuppy.OnlyFruits:OrigTrashCanLevel";
-        public static string OriginalPriceModDataKey { get; } = "RoseBunnyPuppy.OnlyFruits:OrigPrice";
-        public static string OriginalQuestRewardModDataKey { get; } = "RoseBunnyPuppy.OnlyFruits:OriginalReward";
+        const string ModScope = "RoseBunnyPuppy.OnlyFruits";
+        public static string OriginalQuestOfTheDayReward { get; } = $"{ModScope}:OriginalQuestOfTheDayReward";
+        public static string IsOnlyFruitsQuestOfTheDay { get; } = $"{ModScope}:IsOnlyFruitsQuestOfTheDay";
+        public static string OriginalTrashCanDataKey { get; } = $"{ModScope}:OrigTrashCanLevel";
+        public static string OriginalPriceModDataKey { get; } = $"{ModScope}:OrigPrice";
+        public static string OriginalQuestRewardModDataKey { get; } = $"{ModScope}:OriginalReward";
+
+        public static string CreateScoped(string name) => $"{ModScope}:{name}";
     }
 }

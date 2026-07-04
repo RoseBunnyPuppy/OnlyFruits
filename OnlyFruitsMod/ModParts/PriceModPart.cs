@@ -46,7 +46,6 @@ namespace OnlyFruitsMod.ModParts
             // 
             this.ItemManager = new DynamicItemManager(
                 this.IdConfigModel,
-                this.monitor,
                 this.configInstance
             );
         }
