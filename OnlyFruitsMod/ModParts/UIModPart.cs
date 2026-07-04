@@ -99,6 +99,11 @@ namespace OnlyFruitsMod.ModParts
                     setValue: value => configInstance.Config.AllowSellingMemeItems = value
                 )
                 .AddBoolOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-rainbow-items",
+                    getValue: () => configInstance.Config.AllowSellingRainbowItems,
+                    setValue: value => configInstance.Config.AllowSellingRainbowItems = value
+                )
+                .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.sellable-section.option-should-be-fruits",
                     getValue: () => configInstance.Config.AllowSellingShouldaBeenFruitItems,
                     setValue: value => configInstance.Config.AllowSellingShouldaBeenFruitItems = value
