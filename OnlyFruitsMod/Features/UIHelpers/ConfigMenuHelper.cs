@@ -3,7 +3,9 @@ using StardewModdingAPI.Integrations.GenericModConfigMenu;
 
 namespace OnlyFruitsMod.Features.UIHelpers
 {
+    public delegate string TranslationBasedStringProvider(ITranslationHelper i18n);
     public delegate object TokensProvider();
+    public delegate string I18NKeyProvider();
     /// <summary>
     ///     A wrapper class to allow defining menu chunks in 
     ///   a more fluent manner (as well as using a standardized 
@@ -47,11 +49,18 @@ namespace OnlyFruitsMod.Features.UIHelpers
             );
             return this;
         }
+        /// <summary>
+        ///   Add a paragraph at the current position in the form.
+        /// </summary>
+        /// <param name="text">The paragraph text to display.</param>
+        public ConfigMenuHelper AddParagraph(TranslationBasedStringProvider text) =>
+            this.AddParagraph(text: () => text(i18n: this.modHelper.Translation));
+        
 
         /// <summary>
         ///   Add a paragraph at the current position in the form.
         /// </summary>
-        /// <param name="i18nKeyName">The name of the i18n key to display</param>
+        /// <param name="i18nKey">The name of the i18n key to display</param>
         public ConfigMenuHelper AddParagraph(string i18nKey)
         {
             this.configMenu.AddParagraph(
@@ -64,7 +73,7 @@ namespace OnlyFruitsMod.Features.UIHelpers
         /// <summary>
         ///   Add a paragraph at the current position in the form.
         /// </summary>
-        /// <param name="i18nKeyName">The name of the i18n key to display</param>
+        /// <param name="i18nKey">The name of the i18n key to display</param>
         /// <param name="tokens">An object containing token key/value pairs. This can be an anonymous object (like <c>new { value = 42, name = "Cranberries" }</c>), a dictionary, or a class instance.</param>
         public ConfigMenuHelper AddParagraph(
             string i18nKey,
@@ -77,7 +86,22 @@ namespace OnlyFruitsMod.Features.UIHelpers
             );
             return this;
         }
-
+        /// <summary>
+        ///   Add a paragraph at the current position in the form.
+        /// </summary>
+        /// <param name="i18nKey">The name of the i18n key to display</param>
+        /// <param name="tokens">An object containing token key/value pairs. This can be an anonymous object (like <c>new { value = 42, name = "Cranberries" }</c>), a dictionary, or a class instance.</param>
+        public ConfigMenuHelper AddParagraph(
+            I18NKeyProvider i18nKey,
+            TokensProvider? tokens
+        )
+        {
+            this.configMenu.AddParagraph(
+                mod: this.ModManifest,
+                text: () => this.modHelper.Translation.Get(i18nKey(), tokens?.Invoke())
+            );
+            return this;
+        }
 
         /// <summary>
         ///   Add a section title at the current position in the form.

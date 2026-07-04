@@ -51,10 +51,37 @@ namespace OnlyFruitsMod.Features.PerSaveChallengeInformation
             }
         }
         
+        private void DisplayEnabledMessage(bool hasNewVersion)
+        {
+            if (hasNewVersion)
+            {
+                string message = this.helper.Translation.Get("rosebunnypuppy.onlyfruits.ui.challenge-warning.enabled_with_update");
+                this.SetDialogueMessage(message);
+            }
+            else
+            {
+                string message = this.helper.Translation.Get("rosebunnypuppy.onlyfruits.ui.challenge-warning.enabled");
+                this.SetDialogueMessage(message);
+            }
+        }
         private void AnnounceChallengeIsEnabled()
         {
-            string message = this.helper.Translation.Get("rosebunnypuppy.onlyfruits.ui.challenge-warning.enabled");
-            this.SetDialogueMessage(message);
+            if (!this.configInstance.Config.ShouldIncludeNewVersionMessageDuringEnabledMessage) { 
+
+                this.DisplayEnabledMessage(hasNewVersion: false);
+                return;
+            }
+            var updateInfo = this.context.UpdateHelper.GetUpdateInformation(this.context.ModManifest.UniqueID);
+            if (updateInfo == null)
+            {
+                this.DisplayEnabledMessage(hasNewVersion: false);
+                return;
+            }
+            else
+            {
+                this.DisplayEnabledMessage(hasNewVersion: true);
+                return;
+            }
         }
         private void AnnounceChallengeHasBeenFreshlyDisabled()
         {
