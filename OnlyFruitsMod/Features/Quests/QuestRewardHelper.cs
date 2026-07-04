@@ -93,7 +93,7 @@ namespace OnlyFruitsMod.Features.Quests
                 {
                     if (!TryGetDataGemRewardAmount(data, out var originalAmount))
                     {
-                        Debugger.Break();
+                        Logger.Instance.Log($"Failed to restore gem reward for special order '{specialOrder.questName.Value}'", LogLevel.Error);
                         return false;
                     }
 
@@ -115,7 +115,7 @@ namespace OnlyFruitsMod.Features.Quests
                 {
                     if (!TryGetDataMoneyRewardAmount(data, out var originalAmount))
                     {
-                        Debugger.Break();
+                        Logger.Instance.Log($"Failed to restore money reward for special order '{specialOrder.questName.Value}'", LogLevel.Error);
                         return false;
                     }
     
