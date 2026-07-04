@@ -216,6 +216,11 @@ namespace OnlyFruitsMod.ModParts
                     setValue: value => configInstance.Config.AnnounceWhenChallengeIsEnabled = value
                 )
                 .AddBoolOption(
+                    i18nKeyName: "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-new-updates",
+                    getValue: () => configInstance.Config.ShouldIncludeNewVersionMessageDuringEnabledMessage,
+                    setValue: value => configInstance.Config.ShouldIncludeNewVersionMessageDuringEnabledMessage  = value
+                )
+                .AddBoolOption(
                     i18nKeyName: "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled",
                     getValue: () => configInstance.Config.AnnounceWhenChallengeIsDisabled,
                     setValue: value => configInstance.Config.AnnounceWhenChallengeIsDisabled = value

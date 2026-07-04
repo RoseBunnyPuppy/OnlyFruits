@@ -150,6 +150,12 @@
         public bool AnnounceWhenChallengeIsEnabled { get; set; } = true;
 
         /// <summary>
+        ///     If true, the 'challenge enabled' message will also tell the user when there is a new message.
+        /// </summary>
+        /// <remarks>rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-new-updates</remarks>
+        public bool ShouldIncludeNewVersionMessageDuringEnabledMessage { get; set; } = true;
+
+        /// <summary>
         ///     If true, a message will be displayed on save games where we AREN'T
         ///   using the challenge.
         /// </summary>

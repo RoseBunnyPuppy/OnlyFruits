@@ -9,90 +9,97 @@ namespace OnlyFruitsMod.Features.UpdateHelpers
     public class ModUpdateHelper
     {
         private readonly IModHelper helper;
-        const string IModInfo_UpdateCheckDataProperty = "UpdateCheckData";
+
+        private Dictionary<string, UpdateVersionInfo?> CachedUpdateInfo { get; }
+
         public ModUpdateHelper(
             IModHelper helper
         )
         {
             this.helper = helper;
-            
+            this.CachedUpdateInfo = new Dictionary<string, UpdateVersionInfo?>();
         }
 
-        private Dictionary<Type, PropertyInfo?> CachedModInfoUpdateCheckProperties = new();
-        private Dictionary<Type, PropertyInfo?> UpdateCheckDataProperties = new();
-
-        private PropertyInfo? GetCachedPropertyInfo(Dictionary<Type, PropertyInfo?> lookups, object instance, string name)
+        public void ResetUpdateInfo()
         {
-
-            var infoType = instance.GetType();
-            if (!lookups.TryGetValue(infoType, out var propInfo))
-            {
-                propInfo = infoType.GetProperty(name, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                lookups[infoType] = propInfo;
-            }
-            return propInfo;
+            this.CachedUpdateInfo.Clear();
         }
-
-
         
-        public UpdateVersionInfo? GetUpdateInformation(string modId)
+        public UpdateVersionInfo? GetUpdateInformation(string modId, bool force = false)
         {
+            if (force || !this.CachedUpdateInfo.TryGetValue(modId, out var updateVersionInfo))
+            {
+                this.CachedUpdateInfo[modId] = updateVersionInfo = this.ForceGetUpdateInformation(modId);
+                return updateVersionInfo;
+            }
+            return updateVersionInfo;
+        }
+
+        private bool ExpectType(Type actual, string expected)
+        {
+            if (actual.Name == expected) return true;
+            this.LogUnexpectedTypes(expected, actual: actual.Name);
+            return false;
+        }
+        private void LogUnexpectedTypes(string expected, string actual)
+        {
+            Logger.Instance.LogOnce($"[{nameof(ModUpdateHelper)}] Unexpected internal type '{actual}', expected '{expected}'", LogLevel.Error);
+        }
+
+        private bool TryGetReflectedValue(object instance, string propertyName, string expectedType, out object? value)
+        {
+            var instanceType = instance.GetType();
+            if (!this.ExpectType(actual: instanceType, expected: expectedType))
+            {
+                value = default;
+                return false;
+            }
+
+            var propInfo = instanceType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (propInfo == null)
+            {
+                value = default;
+                return false;
+            }
+
+            value = propInfo.GetValue(instance);
+            return true;
+
+        }
+        private UpdateVersionInfo? ForceGetUpdateInformation(string modId)
+        {
+            
             const string UpdateCheckDataProperty = "UpdateCheckData";
             const string ExpectedCheckDataType = "ModEntryModel";
             const string SuggestedUpdateProperty = "SuggestedUpdate";
+            const string ExpectedModInfoType = "ModMetadata";
 
             var modInfo = this.helper.ModRegistry.Get(modId);
             if (modInfo == null)
             {
-                //Logger.Instance.Log($"Failed to get mod info for own mod.", LogLevel.Error);
-                return null;
+                Logger.Instance.LogOnce($"[{nameof(ModUpdateHelper)}] Unknown mod '{modId}'", LogLevel.Error);
+                return default;
             }
 
-            var updateCheckPropInfo = this.GetCachedPropertyInfo(this.CachedModInfoUpdateCheckProperties, modInfo, UpdateCheckDataProperty);
-            if (updateCheckPropInfo == null) return null;
-
-            var checkData = updateCheckPropInfo.GetValue(modInfo);
-            var actualType = checkData?.GetType().Name;
-            if (checkData == null || actualType != ExpectedCheckDataType)
+            // try to get the 'modInfo.UpdateCheckData' property
+            if (!this.TryGetReflectedValue(modInfo, propertyName: UpdateCheckDataProperty, expectedType: ExpectedModInfoType, out var updateCheckDataValue)) return default;
+            // fail if null
+            if (updateCheckDataValue == null)
             {
-                Logger.Instance.Log($"Unexpected '{UpdateCheckDataProperty}' type: '{actualType ?? "[null]"}", LogLevel.Error);
-                return null;
+                Logger.Instance.LogOnce($"[{nameof(ModUpdateHelper)}] Failed to get modInfo.{UpdateCheckDataProperty}: value was null", LogLevel.Error);
+                return default;
             }
 
+            // try to get the 'modInfo.UpdateCheckData.SuggestedUpdate' property
+            if (!this.TryGetReflectedValue(updateCheckDataValue, propertyName: SuggestedUpdateProperty, expectedType: ExpectedCheckDataType, out var suggestedUpdateValue)) return default;
 
-            var suggestedUpdatePropInfo = this.GetCachedPropertyInfo(this.UpdateCheckDataProperties, checkData, SuggestedUpdateProperty);
-            if (suggestedUpdatePropInfo == null) return null;
-            // +		_version	{0.0.7}	object {StardewModdingAPI.Toolkit.SemanticVersion}
+            if (suggestedUpdateValue == null) return null; 
 
-            //SuggestedUpdate	null	StardewModdingAPI.Toolkit.Framework.Clients.WebApi.ModEntryVersionModel
-            
-            var value = suggestedUpdatePropInfo.GetValue(checkData);
-            if (value == null) return null; 
-
-            var _version = value.GetType().GetProperty("Version", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(value);
-            var _url = value.GetType().GetProperty("Url", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(value)?.ToString();
-            var versionString = _version?.ToString();
-            if (_url == null || versionString == null)return null;
-            return new(new Version(versionString), _url);
+            var _version = suggestedUpdateValue.GetType().GetProperty("Version", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(suggestedUpdateValue)?.ToString();
+            var _url = suggestedUpdateValue.GetType().GetProperty("Url", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(suggestedUpdateValue)?.ToString();
+            if (_url == null || _version == null) return null;
+            return new(new Version(_version), _url);
         }
-        public bool DoesHaveSuggestedUpdates(IModInfo? modInfo)
-        {
-            if (modInfo == null) return false;
-
-            var infoType = modInfo.GetType();
-            if (!this.CachedModInfoUpdateCheckProperties.TryGetValue(infoType, out var propInfo))
-            {
-                propInfo = infoType.GetProperty("UpdateCheckData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                this.CachedModInfoUpdateCheckProperties[infoType] = propInfo;
-            }
-
-            if (propInfo == null) return false;
-
-            var checkData = propInfo.GetValue(modInfo);
-            _ = 23;
-            return false;
-        }
-
         
     }
 }

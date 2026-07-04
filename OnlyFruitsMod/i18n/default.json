@@ -3,6 +3,7 @@
   "rosebunnypuppy.onlyfruits.ui.challenge-warning.query.option.enable": "Yes",
   "rosebunnypuppy.onlyfruits.ui.challenge-warning.query.option.disable": "No",
   "rosebunnypuppy.onlyfruits.ui.challenge-warning.enabled": "You are playing with the Only Fruits challenge enabled!",
+  "rosebunnypuppy.onlyfruits.ui.challenge-warning.enabled_with_update": "You are playing with the Only Fruits challenge enabled!  This mod has an update available.",
   "rosebunnypuppy.onlyfruits.ui.challenge-warning.disabled_fresh": "The Only Fruits challenge has been disabled!",
   "rosebunnypuppy.onlyfruits.ui.challenge-warning.disabled": "You are NOT playing with the Only Fruits challenge!",
 
@@ -13,9 +14,6 @@
   "rosebunnypuppy.onlyfruits.ui.header-section.is-active.enabled": "Challenge status: active",
   "rosebunnypuppy.onlyfruits.ui.header-section.is-active.disabled": "Challenge status: inactive",
 
-  "rosebunnypuppy.onlyfruits.ui.version-string.v1": "version {{ModVersion}} ({{UpdateInfo}}).  is active: {{IsEnabled}}",
-  "rosebunnypuppy.onlyfruits.ui.version-string.v1.latest-version": "No updates available.",
-  "rosebunnypuppy.onlyfruits.ui.version-string.v1.updates-available": "Updates available: {{Version}}.",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.label": "Sellable Configuration",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.tooltip": "Configure the stuff that can be sold.",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items.label": "Meme Items",
@@ -66,5 +64,7 @@
   "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-enabled.label": "Announce When Enabled",
   "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-enabled.tooltip": "If checked, a message will be shown on saves where this mod IS enabled.",
   "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled.label": "Announce When Disabled",
-  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled.tooltip": "If checked, a message will be shown on saves where this mod IS NOT enabled."
+  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-when-challenge-disabled.tooltip": "If checked, a message will be shown on saves where this mod IS NOT enabled.",
+  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-new-updates.label": "Announce New Updates",
+  "rosebunnypuppy.onlyfruits.ui.challenge-section.option-announce-new-updates.tooltip": "If checked, the 'enabled' message will also tell you if there is a mod update available."
 }
