@@ -21,6 +21,11 @@
         ///   The 'full' ids of artisanal items to allow.
         /// </summary>
         public HashSet<string> ArtisanalFullItemIds { get; set; } = new();
+
+        /// <summary>
+        ///   The 'full' ids of the rainbow items.
+        /// </summary>
+        public HashSet<string> RainbowFullItemId { get; set; } = new();
     }
 
 }

@@ -11,6 +11,8 @@
   "rosebunnypuppy.onlyfruits.ui.sellable-section.tooltip": "Configure the stuff that can be sold.",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items.label": "Meme Items",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-meme-items.tooltip": "If enabled, meme items (like ch- ch- cherry bombs) will be sellable.",
+  "rosebunnypuppy.onlyfruits.ui.sellable-section.option-rainbow-items.label": "Rainbow Items",
+  "rosebunnypuppy.onlyfruits.ui.sellable-section.option-rainbow-items.tooltip": "If enabled, rainbow items (like rainbow trout, rainbow shells, etc) will be sellable.",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-should-be-fruits.label": "Shoulda-been-fruits",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-should-be-fruits.tooltip": "If enabled, items that should logically be fruits will be sellable. (Sweet-gem berries)",
   "rosebunnypuppy.onlyfruits.ui.sellable-section.option-cooked-items.label": "Cooked Items",
