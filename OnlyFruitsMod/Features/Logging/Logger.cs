@@ -19,16 +19,17 @@ namespace OnlyFruitsMod.Features.Logging
 
 
 
+        /// <inheritdoc/>
         public OnlyFruitsLogLevels MaxLogLevel { get; set; } = ModConfig.DefaultLogLevel;
 
         private IMonitor? monitor;
+
+        /// <inheritdoc/>
         public IMonitor Monitor => monitor ?? throw new InvalidOperationException("No IMonitor is configured.");
 
 
-        /// <summary>
-        ///     Returns a value indicating whether the specified <paramref name="level"/>
-        ///   is allowed for the currently configured <see cref="MaxLogLevel"/>.
-        /// </summary>
+       
+        /// <inheritdoc/>
         public bool CanLog(LogLevel level)
         {
             switch (this.MaxLogLevel)
@@ -69,9 +70,8 @@ namespace OnlyFruitsMod.Features.Logging
             this.monitor = monitor;
         }
 
-        /// <summary>Log a message for the player or developer.</summary>
-        /// <param name="message">The message to log.</param>
-        /// <param name="level">The log severity level.</param>
+        
+        /// <inheritdoc/>
         public void Log(string message, LogLevel level)
         {
             if (!this.CanLog(level)) return;
@@ -81,6 +81,7 @@ namespace OnlyFruitsMod.Features.Logging
 
 
     
+        /// <inheritdoc/>
         public void LogOnce(string message, LogLevel level)
         {
             if (!this.CanLog(level)) return;
