@@ -1,6 +1,7 @@
 ﻿using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.PerSaveChallengeInformation;
+using OnlyFruitsMod.Features.Prices;
 using OnlyFruitsMod.Features.UpdateHelpers;
 using OnlyFruitsMod.ModParts;
 using OnlyFruitsMod.ModParts.Models;
@@ -49,6 +50,8 @@ namespace OnlyFruitsMod
 
             var modPartContext = this.BuildPartContext(helper);
             this.ConfigInstance = modPartContext.ConfigInstance;
+
+            PriceCache.GetOrCreateInstance(helper);
 
             // setup the UI handlers
             var _uiPart = new UIModPart(modPartContext);

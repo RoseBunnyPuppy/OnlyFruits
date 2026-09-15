@@ -7,12 +7,15 @@ using OnlyFruitsMod.Features.ReloadHelpers;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.GameData;
 using StardewValley.GameData.Tools;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using System.Diagnostics;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -35,9 +38,7 @@ namespace OnlyFruitsMod.ModParts
             ModPartContext context
         ) : base(context)
         {
-            this.priceCache =  new(
-                this.helper
-            );
+            this.priceCache = PriceCache.GetOrCreateInstance(this.helper);
             
             // load config definition assets
             this.IdConfigModel = this.helper.ModContent.Load<ItemIdConfigModel>("assets/fruity_item_ids.json");

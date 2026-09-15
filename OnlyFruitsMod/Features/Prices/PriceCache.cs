@@ -3,18 +3,24 @@ using OnlyFruitsMod.Infrastructure;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Objects;
+using System.Runtime.CompilerServices;
 
 namespace OnlyFruitsMod.Features.Prices
 {
     public class PriceCache
     {
         private readonly IModHelper helper;
-
+        private static PriceCache? Instance { get; set; }
         public PriceCache(
             IModHelper helper
         )
         {
             this.helper = helper;
+        }
+
+        public static PriceCache GetOrCreateInstance(IModHelper helper)
+        {
+            return PriceCache.Instance ??= new (helper);
         }
 
         public Dictionary<string, Dictionary<string, int>> ScopedCachedPrices { get; set; } = new Dictionary<string, Dictionary<string, int>>();
