@@ -12,6 +12,7 @@ using StardewValley;
 using StardewValley.Extensions;
 using StardewValley.GameData;
 using StardewValley.GameData.Shops;
+using StardewValley.Menus;
 using StardewValley.Quests;
 using System.Diagnostics;
 
@@ -23,6 +24,7 @@ namespace OnlyFruitsMod.ModParts
     public class ShopsModPart : ModPartBase
     {
         private readonly PriceCache priceCache;
+        private readonly PriceCache origPriceCache;
 
         public bool PreloadAssets { get; set; } = PreloadConfiguration.Shops;
 
@@ -31,6 +33,51 @@ namespace OnlyFruitsMod.ModParts
         ) : base(context)
         {
             this.priceCache = PriceCache.GetOrCreateInstance(this.helper);
+            this.origPriceCache = PriceCache.GetOrCreateOrigPrices(this.helper);
+            this.helper.Events.Display.MenuChanged += Display_MenuChanged;
+        }
+
+        private void Display_MenuChanged(object? sender, MenuChangedEventArgs e)
+        {
+            if (e.NewMenu is not ShopMenu shopMenu) return;
+            // catalogues allow all shit to be purchased for free
+            if (shopMenu.ShopId == "Catalogue") return;
+            
+            foreach (var kvp in shopMenu.itemPriceAndStock)
+            {
+                // do nothing if no item id
+                if (string.IsNullOrEmpty(kvp.Value.SyncedKey)) continue;
+
+                // if the price isnt 'automatic' just keep the original price
+                if (kvp.Value.Price != -1 && kvp.Value.Price != 0) continue;
+
+                var item = ItemRegistry.GetData(kvp.Value.SyncedKey);
+
+                // if we dont have the item within the registry, do nothing
+                if (item == null) continue;
+
+                
+                var scopeId = item.GetItemTypeId();
+                if (item.ItemId == "BambooPole")
+                {
+                    kvp.Value.Price = 500;
+                    continue;
+                }
+                // if the original price is known, apply the price
+                if (this.origPriceCache.TryGetPriceFull(scopeId, item.ItemId, out var origPrice, out var _))
+                {
+                    if (scopeId == "(F)")
+                    {
+                        kvp.Value.Price = origPrice;
+                        continue;
+                    }
+                    else
+                    {
+                        kvp.Value.Price = origPrice * 2;
+                    }
+                    continue;
+                }
+            }
         }
 
         /// <summary>
@@ -61,6 +108,55 @@ namespace OnlyFruitsMod.ModParts
 
             return true;
         }
+
+       
+        private void ClassifyItem(string shopId, ShopData shopData, ShopItemData shopItem)
+        {
+            var dataFromId = ItemRegistry.GetData(shopItem.Id);
+            // if there is already a fixed price, do nothing
+            if (shopItem.Price != -1) return;
+            // do nothing for 'traded' items
+            if (!string.IsNullOrEmpty(shopItem.TradeItemId)) return;
+            if (dataFromId != null)
+            {
+                if (!this.priceCache.TryGetPriceFull(dataFromId, out var origPrice, out var _)) return;
+                shopItem.Price = origPrice * 2;
+                return;
+            }
+            var dataFromItemId = ItemRegistry.GetData(shopItem.ItemId);
+            if (dataFromItemId != null)
+            {
+                if (!this.priceCache.TryGetPriceFull(dataFromItemId, out var origPrice, out var _)) return;
+                shopItem.Price = origPrice * 2;
+                return;
+            }
+        }
+        private void PatchRequestedAsset(string shopId, ShopData? shopData)
+        {
+            if (shopData == null) return;
+            var shopItems = shopData.Items?.ToArray();
+            if (shopItems != null)
+            {
+                foreach (var shopItem in shopItems)
+                {
+                    this.ClassifyItem(shopId, shopData, shopItem);
+                }
+            }
+            // skip if there are no 'sale tags'
+            if (shopData.SalableItemTags == null) return;
+
+
+            var tags = shopData.SalableItemTags;
+            var origTags = tags.ToArray();
+            tags.Clear();
+
+
+            // if the store never allowed buying fruits, dont allow them to buy anything
+            if (!origTags.Contains(HardcodedSalableTags.Fruits)) return;
+
+            // otherwise, re-allow them to buy fruits
+            tags.Add(HardcodedSalableTags.Fruits);
+        }
         /// <inheritdoc/>
         protected override void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
         {
@@ -74,57 +170,9 @@ namespace OnlyFruitsMod.ModParts
 
                         if (kvp.Value == null)
                         {
-                            Logger.Instance.Log($"NULL Value shop: {kvp.Key}", LogLevel.Error);
                             continue;
                         }
-
-                        var shopItems = kvp.Value.Items?.ToArray();
-                        if (shopItems?.Any() == true)
-                        {
-                            Logger.Instance.Log($"Shop with items: {kvp.Key}", LogLevel.Error);
-                            foreach (var shopItem in shopItems)
-                            {
-                                var data1 = ItemRegistry.GetData(shopItem.Id);
-                                if (shopItem.Price != -1) continue;
-                                if (!shopItem.Id.Contains('('))
-                                {
-                                    if (data1 != null)
-                                    {
-                                        var itemTypeId = data1.GetItemTypeId();
-                                        if (priceCache != null)
-                                        {
-
-                                            if (priceCache.TryGetPriceFull(itemTypeId, data1.ItemId, out var _price, out var _wasScopeKnown))
-                                            {
-                                                _ = 23;
-                                            }
-                                            else
-                                            {
-                                                _ = 23;
-                                            }
-                                        }
-
-                                        _ = 23;
-                                    }
-                                }
-                                Logger.Instance.Log($"{shopItem.Id}", LogLevel.Error);
-                                shopItem.Price = 100;
-                            }
-                        }
-                        // skip if there are no 'sale tags'
-                        if (kvp.Value.SalableItemTags == null) continue;
-
-
-                        var tags = kvp.Value.SalableItemTags;
-                        var origTags = tags.ToArray();
-                        tags.Clear();
-
-
-                        // if the store never allowed buying fruits, dont allow them to buy anything
-                        if (!origTags.Contains(HardcodedSalableTags.Fruits)) continue;
-
-                        // otherwise, re-allow them to buy fruits
-                        tags.Add(HardcodedSalableTags.Fruits);
+                        this.PatchRequestedAsset(kvp.Key, kvp.Value);
                     }
                 });
             }
