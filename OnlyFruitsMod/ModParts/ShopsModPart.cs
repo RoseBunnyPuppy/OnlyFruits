@@ -110,7 +110,7 @@ namespace OnlyFruitsMod.ModParts
         }
 
        
-        private void ClassifyItem(string shopId, ShopData shopData, ShopItemData shopItem)
+        private void PatchPrice(string shopId, ShopData shopData, ShopItemData shopItem)
         {
             var dataFromId = ItemRegistry.GetData(shopItem.Id);
             // if there is already a fixed price, do nothing
@@ -139,7 +139,7 @@ namespace OnlyFruitsMod.ModParts
             {
                 foreach (var shopItem in shopItems)
                 {
-                    this.ClassifyItem(shopId, shopData, shopItem);
+                    this.PatchPrice(shopId, shopData, shopItem);
                 }
             }
             // skip if there are no 'sale tags'

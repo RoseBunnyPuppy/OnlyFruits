@@ -51,6 +51,7 @@ namespace OnlyFruitsMod
             var modPartContext = this.BuildPartContext(helper);
             this.ConfigInstance = modPartContext.ConfigInstance;
 
+            // initialize the price caches
             PriceCache.GetOrCreateInstance(helper);
             PriceCache.GetOrCreateOrigPrices(helper);
 
@@ -66,8 +67,8 @@ namespace OnlyFruitsMod
             var _monsterSlayerPart = new MonsterSlayerQuestsModPart(modPartContext);
             var challengeNoticePart = new ChallengeNoticeModPart(modPartContext);
 
-            challengeNoticePart.Run();
             // run the parts
+            challengeNoticePart.Run();
             _pricePart.Run();
             _shopsPart.Run();
             _specialOrdersPart.Run();
