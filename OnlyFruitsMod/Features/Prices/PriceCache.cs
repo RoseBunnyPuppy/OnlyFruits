@@ -3,6 +3,7 @@ using OnlyFruitsMod.Infrastructure;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Objects;
+using StardewValley.ItemTypeDefinitions;
 using System.Runtime.CompilerServices;
 
 namespace OnlyFruitsMod.Features.Prices
@@ -45,6 +46,9 @@ namespace OnlyFruitsMod.Features.Prices
         {
             this.ScopedCachedPrices.Remove(scope);
         }
+
+        public bool TryGetPriceFull(ParsedItemData item, out int price, out bool wasScopeKnown) =>
+            this.TryGetPriceFull(item.GetItemTypeId(), item.ItemId, out price, out wasScopeKnown);
 
         public bool TryGetPriceFull(Item item, out int price, out bool wasScopeKnown) => 
             this.TryGetPriceFull(item.GetItemTypeId(), item.ItemId, out price, out wasScopeKnown);
