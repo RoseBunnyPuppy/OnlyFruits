@@ -33,13 +33,15 @@ namespace OnlyFruitsMod.ModParts
         private readonly ReloadManager reloadManager = new();
 
         private readonly PriceCache priceCache;
+        private readonly PriceCache origPriceCache;
 
         public PriceModPart(
             ModPartContext context
         ) : base(context)
         {
             this.priceCache = PriceCache.GetOrCreateInstance(this.helper);
-            
+            this.origPriceCache = PriceCache.GetOrCreateOrigPrices(this.helper);
+
             // load config definition assets
             this.IdConfigModel = this.helper.ModContent.Load<ItemIdConfigModel>("assets/fruity_item_ids.json");
             this.TrashCanPartialIds = this.helper.ModContent.Load<string[]>("assets/trashcan_tool_ids.json").ToHashSet();
@@ -165,7 +167,6 @@ namespace OnlyFruitsMod.ModParts
         ///   Constructs a dictionary with value 0 for each key.
         /// </summary>
         private Dictionary<string, int> TreatAllAs0<T>(IDictionary<string, T> original) => Create0ValuesForKeys(original.Keys);
-        
         /// <summary>
         ///   Constructs a dictionary with value 0 for each key.
         /// </summary>
@@ -210,6 +211,7 @@ namespace OnlyFruitsMod.ModParts
                      * as well as limiting the ability to have upgraded trashcans.
                      */
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -222,6 +224,15 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataFurniture).Data;
                     // The wiki says: Furniture cannot be sold through the Shipping Bin or to any merchant/shop, and cannot be gifted to villagers. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp =>
+                    {
+                        var priceField = kvp.Value.Split('/')[5];
+                        if (!string.IsNullOrEmpty(priceField))
+                        {
+                            return int.Parse(priceField);
+                        }
+                        return 0;
+                    }));
                 });
                 return true;
             }

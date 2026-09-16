@@ -52,6 +52,7 @@ namespace OnlyFruitsMod
             this.ConfigInstance = modPartContext.ConfigInstance;
 
             PriceCache.GetOrCreateInstance(helper);
+            PriceCache.GetOrCreateOrigPrices(helper);
 
             // setup the UI handlers
             var _uiPart = new UIModPart(modPartContext);

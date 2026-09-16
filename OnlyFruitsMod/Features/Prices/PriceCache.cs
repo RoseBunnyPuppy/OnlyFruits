@@ -11,6 +11,7 @@ namespace OnlyFruitsMod.Features.Prices
     {
         private readonly IModHelper helper;
         private static PriceCache? Instance { get; set; }
+        private static PriceCache? OrigPrices{ get; set; }
         public PriceCache(
             IModHelper helper
         )
@@ -18,6 +19,10 @@ namespace OnlyFruitsMod.Features.Prices
             this.helper = helper;
         }
 
+        public static PriceCache GetOrCreateOrigPrices(IModHelper helper)
+        {
+            return PriceCache.OrigPrices ??= new(helper);
+        }
         public static PriceCache GetOrCreateInstance(IModHelper helper)
         {
             return PriceCache.Instance ??= new (helper);
