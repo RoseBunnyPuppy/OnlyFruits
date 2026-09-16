@@ -7,12 +7,15 @@ using OnlyFruitsMod.Features.ReloadHelpers;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.ModParts.Core;
 using OnlyFruitsMod.ModParts.Models;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.GameData;
 using StardewValley.GameData.Tools;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using System.Diagnostics;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -30,15 +33,15 @@ namespace OnlyFruitsMod.ModParts
         private readonly ReloadManager reloadManager = new();
 
         private readonly PriceCache priceCache;
+        private readonly PriceCache origPriceCache;
 
         public PriceModPart(
             ModPartContext context
         ) : base(context)
         {
-            this.priceCache =  new(
-                this.helper
-            );
-            
+            this.priceCache = PriceCache.GetOrCreateInstance(this.helper);
+            this.origPriceCache = PriceCache.GetOrCreateOrigPrices(this.helper);
+
             // load config definition assets
             this.IdConfigModel = this.helper.ModContent.Load<ItemIdConfigModel>("assets/fruity_item_ids.json");
             this.TrashCanPartialIds = this.helper.ModContent.Load<string[]>("assets/trashcan_tool_ids.json").ToHashSet();
@@ -164,7 +167,6 @@ namespace OnlyFruitsMod.ModParts
         ///   Constructs a dictionary with value 0 for each key.
         /// </summary>
         private Dictionary<string, int> TreatAllAs0<T>(IDictionary<string, T> original) => Create0ValuesForKeys(original.Keys);
-        
         /// <summary>
         ///   Constructs a dictionary with value 0 for each key.
         /// </summary>
@@ -209,6 +211,7 @@ namespace OnlyFruitsMod.ModParts
                      * as well as limiting the ability to have upgraded trashcans.
                      */
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -221,6 +224,15 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataFurniture).Data;
                     // The wiki says: Furniture cannot be sold through the Shipping Bin or to any merchant/shop, and cannot be gifted to villagers. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp =>
+                    {
+                        var priceField = kvp.Value.Split('/')[5];
+                        if (!string.IsNullOrEmpty(priceField))
+                        {
+                            return int.Parse(priceField);
+                        }
+                        return 0;
+                    }));
                 });
                 return true;
             }
@@ -233,6 +245,7 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataHats).Data;
                     // The wiki says: Hats cannot be sold through the Shipping Bin, to the Hat Mouse, or to any store/shop in the game. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -245,6 +258,7 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataMannequins).Data;
                     // The wiki says: Cannot be sold 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -257,6 +271,7 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataPants).Data;
                     // The wiki says: Shirts, Pants, and Hats cannot be sold anywhere in Stardew Valley. Boots/Shoes can be sold to the Adventurer's Guild. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -269,6 +284,7 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataShirts).Data;
                     // The wiki says: Shirts, Pants, and Hats cannot be sold anywhere in Stardew Valley. Boots/Shoes can be sold to the Adventurer's Guild. 
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -288,6 +304,7 @@ namespace OnlyFruitsMod.ModParts
 
                     // it doesnt appear that we can sell tools
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -300,6 +317,7 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataTrinkets).Data;
                     // every trinket seems to be sellable for 1000
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -313,6 +331,8 @@ namespace OnlyFruitsMod.ModParts
                     // unsure
                     this.priceCache.SetPriceData(ItemIdPrefixes.Flooring, Create0ValuesForKeys(data.Where(x => x.IsFlooring).Select(item => item.Id)));
                     this.priceCache.SetPriceData(ItemIdPrefixes.Wallpaper, Create0ValuesForKeys(data.Where(x => !x.IsFlooring).Select(item => item.Id)));
+                    this.origPriceCache.SetPriceData(ItemIdPrefixes.Flooring, Create0ValuesForKeys(data.Where(x => x.IsFlooring).Select(item => item.Id)));
+                    this.origPriceCache.SetPriceData(ItemIdPrefixes.Wallpaper, Create0ValuesForKeys(data.Where(x => !x.IsFlooring).Select(item => item.Id)));
                 });
                 return true;
             }
@@ -325,6 +345,7 @@ namespace OnlyFruitsMod.ModParts
                     var data = asset.AsAutoDictionary(HardcodedAssetPaths.DataWeapons).Data;
                     // every trinket seems to be sellable for 1000 (we prevent selling them via shop filters)
                     this.priceCache.SetPriceData(scope, TreatAllAs0(data));
+                    this.origPriceCache.SetPriceData(scope, TreatAllAs0(data));
                 });
                 return true;
             }
@@ -338,6 +359,7 @@ namespace OnlyFruitsMod.ModParts
 
                     //reset the price cache for the scope
                     this.priceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Price));
+                    this.origPriceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Price));
 
                     // set non-fruits to have a sale price of 0
                     foreach (var (partialItemId, itemData) in data)
@@ -358,6 +380,7 @@ namespace OnlyFruitsMod.ModParts
 
                     // reset the price cache
                     this.priceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Price));
+                    this.origPriceCache.SetPriceData(scope, data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Price));
 
                     // find items
                     this.ItemManager.ApplyObjectData(data);

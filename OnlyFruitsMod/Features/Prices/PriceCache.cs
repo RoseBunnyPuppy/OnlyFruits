@@ -3,18 +3,30 @@ using OnlyFruitsMod.Infrastructure;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Objects;
+using StardewValley.ItemTypeDefinitions;
+using System.Runtime.CompilerServices;
 
 namespace OnlyFruitsMod.Features.Prices
 {
     public class PriceCache
     {
         private readonly IModHelper helper;
-
+        private static PriceCache? Instance { get; set; }
+        private static PriceCache? OrigPrices{ get; set; }
         public PriceCache(
             IModHelper helper
         )
         {
             this.helper = helper;
+        }
+
+        public static PriceCache GetOrCreateOrigPrices(IModHelper helper)
+        {
+            return PriceCache.OrigPrices ??= new(helper);
+        }
+        public static PriceCache GetOrCreateInstance(IModHelper helper)
+        {
+            return PriceCache.Instance ??= new (helper);
         }
 
         public Dictionary<string, Dictionary<string, int>> ScopedCachedPrices { get; set; } = new Dictionary<string, Dictionary<string, int>>();
@@ -34,6 +46,9 @@ namespace OnlyFruitsMod.Features.Prices
         {
             this.ScopedCachedPrices.Remove(scope);
         }
+
+        public bool TryGetPriceFull(ParsedItemData item, out int price, out bool wasScopeKnown) =>
+            this.TryGetPriceFull(item.GetItemTypeId(), item.ItemId, out price, out wasScopeKnown);
 
         public bool TryGetPriceFull(Item item, out int price, out bool wasScopeKnown) => 
             this.TryGetPriceFull(item.GetItemTypeId(), item.ItemId, out price, out wasScopeKnown);
