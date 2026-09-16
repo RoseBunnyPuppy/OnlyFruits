@@ -42,7 +42,8 @@ namespace OnlyFruitsMod.ModParts
             if (e.NewMenu is not ShopMenu shopMenu) return;
             // catalogues allow all shit to be purchased for free
             if (shopMenu.ShopId == "Catalogue") return;
-            
+            else if (shopMenu.ShopId == "DesertTrade") return;
+
             foreach (var kvp in shopMenu.itemPriceAndStock)
             {
                 // do nothing if no item id
