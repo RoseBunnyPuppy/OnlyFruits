@@ -12,9 +12,11 @@ using StardewValley;
 using StardewValley.Extensions;
 using StardewValley.GameData;
 using StardewValley.GameData.Shops;
+using StardewValley.ItemTypeDefinitions;
 using StardewValley.Menus;
 using StardewValley.Quests;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OnlyFruitsMod.ModParts
 {
@@ -37,45 +39,158 @@ namespace OnlyFruitsMod.ModParts
             this.helper.Events.Display.MenuChanged += Display_MenuChanged;
         }
 
+        #if !DisableDevHelpers
+
+        private List<string> ExtractItemPriceAndStockIds(Dictionary<ISalable, ItemStockInformation> itemPriceAndStock)
+        {
+            return itemPriceAndStock
+                .Select(kvp =>
+                {
+                    var key1 = kvp.Value.SyncedKey;
+                    var key2 = kvp.Value.ItemToSyncStack?.QualifiedItemId;
+                    return string.Join(", ", new[] {
+                        key1,
+                        key2 ?? "",
+                    });
+                }).ToList();
+        }
+        #endif
+        static HashSet<string> UnmodifiedShops { get; } = new HashSet<string>
+        {
+            // catalogues allow all shit to be purchased for free
+            "Catalogue",
+            "Furniture Catalogue",
+            "JojaFurnitureCatalogue",
+            "JunimoFurnitureCatalogue",
+            "RetroFurnitureCatalogue",
+            "TrashFurnitureCatalogue",
+            "WizardFurnitureCatalogue",
+
+            // nothing here should cost gold
+            "DesertTrade",
+            // nothing here should cost gold
+            "BooksellerTrade",
+
+            // desert festival villager shops
+            "DesertFestival_Abigail",
+            "DesertFestival_Alex",
+            "DesertFestival_Caroline",
+            "DesertFestival_Clint",
+            "DesertFestival_Demetrius",
+            "DesertFestival_Elliott",
+            "DesertFestival_Emily",
+            "DesertFestival_Evelyn",
+            "DesertFestival_George",
+            "DesertFestival_Gus",
+            "DesertFestival_Haley",
+            "DesertFestival_Harvey",
+            "DesertFestival_Jas",
+            "DesertFestival_Jodi",
+            "DesertFestival_Kent",
+            "DesertFestival_Leah",
+            "DesertFestival_Leo",
+            "DesertFestival_Marnie",
+            "DesertFestival_Maru",
+            "DesertFestival_Pam",
+            "DesertFestival_Penny",
+            "DesertFestival_Pierre",
+            "DesertFestival_Robin",
+            "DesertFestival_Sam",
+            "DesertFestival_Sebastian",
+            "DesertFestival_Shane",
+            "DesertFestival_Vincent",
+
+            // calico egg merchant
+            "DesertFestival_EggShop",
+            // other non-gold shops
+            "QiGemShop",
+            "IslandTrade",
+            "Raccoon",
+        };
+
+        private bool TryGetItemIdWithData(
+            ISalable key,
+            ItemStockInformation value,
+            [NotNullWhen(returnValue: true)] out string? itemId,
+            [NotNullWhen(returnValue: true)] out ParsedItemData? item
+        )
+        {
+            item = ItemRegistry.GetData(value.SyncedKey);
+            if (item != null)
+            {
+                itemId = value.SyncedKey;
+                return true;
+            }
+
+            if (value.ItemToSyncStack != null)
+            {
+                item = ItemRegistry.GetData(value.ItemToSyncStack.QualifiedItemId);
+                if (item != null)
+                {
+                    itemId = value.ItemToSyncStack.QualifiedItemId;
+                    return true;
+                }
+            }
+
+            item = ItemRegistry.GetData(key.QualifiedItemId);
+            if (item != null)
+            {
+                itemId = key.QualifiedItemId;
+                return true;
+            }
+            itemId = default;
+            return false;
+        }
+
+        
+        static Dictionary<string, int> CategoryMultipliers = new()
+        {
+            ["(F)"] = 1,
+        };
+        private int GetCategoryMultiplier(string category)
+        {
+            const int FallbackCategoryMultiplier = 2;
+            if (CategoryMultipliers.TryGetValue(category, out var multiplier)) return multiplier;
+            return FallbackCategoryMultiplier;
+        }
+        //static Dictionary<string, HashSet<string>> 
         private void Display_MenuChanged(object? sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is not ShopMenu shopMenu) return;
-            // catalogues allow all shit to be purchased for free
-            if (shopMenu.ShopId == "Catalogue") return;
-            else if (shopMenu.ShopId == "DesertTrade") return;
-
+#if !DisableDevHelpers
+            var pairs01 = ExtractItemPriceAndStockIds(shopMenu.itemPriceAndStock);
+#endif
+            if (UnmodifiedShops.Contains(shopMenu.ShopId)) return;
+          
             foreach (var kvp in shopMenu.itemPriceAndStock)
             {
+           
                 // do nothing if no item id
                 if (string.IsNullOrEmpty(kvp.Value.SyncedKey)) continue;
-
-                // if the price isnt 'automatic' just keep the original price
-                if (kvp.Value.Price != -1 && kvp.Value.Price != 0) continue;
-
-                var item = ItemRegistry.GetData(kvp.Value.SyncedKey);
-
-                // if we dont have the item within the registry, do nothing
-                if (item == null) continue;
-
-                
-                var scopeId = item.GetItemTypeId();
-                if (item.ItemId == "BambooPole")
+                if (shopMenu.ShopId == "VolcanoShop")
                 {
-                    kvp.Value.Price = 500;
+                    if (kvp.Value.SyncedKey == "(O)Book_Diamonds") continue;
+                    else if (kvp.Value.SyncedKey == "(B)853") continue;
+                }
+                else if (shopMenu.ShopId == "LostItems")
+                {
+                    // apparently _ALL_ items here are 10k
+                    // https://stardewvalleywiki.com/Secret_Woods#Lost_Items_Shop
+                    kvp.Value.Price = 10_000;
                     continue;
                 }
+             
+                // if the price isnt 'automatic' just keep the original price
+                if (kvp.Value.Price != -1 && kvp.Value.Price != 0) continue;
+                if (!this.TryGetItemIdWithData(kvp.Key, kvp.Value, out var itemId, out var item)) continue;
+               
+                var scopeId = item.GetItemTypeId();
+              
                 // if the original price is known, apply the price
                 if (this.origPriceCache.TryGetPriceFull(scopeId, item.ItemId, out var origPrice, out var _))
                 {
-                    if (scopeId == "(F)")
-                    {
-                        kvp.Value.Price = origPrice;
-                        continue;
-                    }
-                    else
-                    {
-                        kvp.Value.Price = origPrice * 2;
-                    }
+                    var multiplier = this.GetCategoryMultiplier(scopeId);
+                    kvp.Value.Price = origPrice * multiplier; ;
                     continue;
                 }
             }
@@ -135,14 +250,7 @@ namespace OnlyFruitsMod.ModParts
         private void PatchRequestedAsset(string shopId, ShopData? shopData)
         {
             if (shopData == null) return;
-            var shopItems = shopData.Items?.ToArray();
-            if (shopItems != null)
-            {
-                foreach (var shopItem in shopItems)
-                {
-                    this.PatchPrice(shopId, shopData, shopItem);
-                }
-            }
+           
             // skip if there are no 'sale tags'
             if (shopData.SalableItemTags == null) return;
 
