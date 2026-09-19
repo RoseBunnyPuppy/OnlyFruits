@@ -2,6 +2,7 @@
 using OnlyFruitsMod.Features.Logging;
 using OnlyFruitsMod.Features.ModConfiguration;
 using OnlyFruitsMod.Features.Prices;
+using OnlyFruitsMod.Features.Shops.Models;
 using OnlyFruitsMod.Infrastructure;
 using OnlyFruitsMod.Models;
 using OnlyFruitsMod.ModParts.Core;
@@ -25,6 +26,7 @@ namespace OnlyFruitsMod.ModParts
     /// </summary>
     public class ShopsModPart : ModPartBase
     {
+        private readonly ShopPricePatchModel shopPriceModel;
         private readonly PriceCache priceCache;
         private readonly PriceCache origPriceCache;
 
@@ -34,6 +36,9 @@ namespace OnlyFruitsMod.ModParts
             ModPartContext context
         ) : base(context)
         {
+            this.shopPriceModel = this.helper.ModContent.Load<ShopPricePatchModel>("assets/shop_patching.json");
+            this.shopPriceModel.Clean();
+
             this.priceCache = PriceCache.GetOrCreateInstance(this.helper);
             this.origPriceCache = PriceCache.GetOrCreateOrigPrices(this.helper);
             this.helper.Events.Display.MenuChanged += Display_MenuChanged;
@@ -55,58 +60,7 @@ namespace OnlyFruitsMod.ModParts
                 }).ToList();
         }
         #endif
-        static HashSet<string> UnmodifiedShops { get; } = new HashSet<string>
-        {
-            // catalogues allow all shit to be purchased for free
-            "Catalogue",
-            "Furniture Catalogue",
-            "JojaFurnitureCatalogue",
-            "JunimoFurnitureCatalogue",
-            "RetroFurnitureCatalogue",
-            "TrashFurnitureCatalogue",
-            "WizardFurnitureCatalogue",
 
-            // nothing here should cost gold
-            "DesertTrade",
-            // nothing here should cost gold
-            "BooksellerTrade",
-
-            // desert festival villager shops
-            "DesertFestival_Abigail",
-            "DesertFestival_Alex",
-            "DesertFestival_Caroline",
-            "DesertFestival_Clint",
-            "DesertFestival_Demetrius",
-            "DesertFestival_Elliott",
-            "DesertFestival_Emily",
-            "DesertFestival_Evelyn",
-            "DesertFestival_George",
-            "DesertFestival_Gus",
-            "DesertFestival_Haley",
-            "DesertFestival_Harvey",
-            "DesertFestival_Jas",
-            "DesertFestival_Jodi",
-            "DesertFestival_Kent",
-            "DesertFestival_Leah",
-            "DesertFestival_Leo",
-            "DesertFestival_Marnie",
-            "DesertFestival_Maru",
-            "DesertFestival_Pam",
-            "DesertFestival_Penny",
-            "DesertFestival_Pierre",
-            "DesertFestival_Robin",
-            "DesertFestival_Sam",
-            "DesertFestival_Sebastian",
-            "DesertFestival_Shane",
-            "DesertFestival_Vincent",
-
-            // calico egg merchant
-            "DesertFestival_EggShop",
-            // other non-gold shops
-            "QiGemShop",
-            "IslandTrade",
-            "Raccoon",
-        };
 
         private bool TryGetItemIdWithData(
             ISalable key,
@@ -153,6 +107,38 @@ namespace OnlyFruitsMod.ModParts
             if (CategoryMultipliers.TryGetValue(category, out var multiplier)) return multiplier;
             return FallbackCategoryMultiplier;
         }
+
+        private bool TryConfigBasedOverride(string shopId, ItemStockInformation itemStockInformation)
+        {
+            // skip if no overrides for this shop
+            if (!this.shopPriceModel.TryGetShopPriceOverrides(shopId, out var shopOverride)) return false;
+
+            bool TrySetFallback()
+            {
+                if (shopOverride.FallbackPrice.HasValue)
+                {
+                    itemStockInformation.Price = shopOverride.FallbackPrice.Value;
+                    return true;
+                }
+                return false;
+            }
+            var itemId = itemStockInformation.SyncedKey;
+            
+            // if the item is registered
+            if (shopOverride.ItemPrices?.TryGetValue(itemId, out var price) == true)
+            {
+                // if it is the 'use fallback' magic value, attempt to use it
+                if (price == ShopOverrideModel.MagicFallback) return TrySetFallback();
+                // if it is the 'bypass fallback' magic value, dont use the fallback value
+                else if (price == ShopOverrideModel.MagicBypass) return false;
+                // otherwise, set the price
+                itemStockInformation.Price = price;
+                return true;
+            }
+
+            // otherwise, try to set the fallback
+            return TrySetFallback();
+        }
         //static Dictionary<string, HashSet<string>> 
         private void Display_MenuChanged(object? sender, MenuChangedEventArgs e)
         {
@@ -160,25 +146,16 @@ namespace OnlyFruitsMod.ModParts
 #if !DisableDevHelpers
             var pairs01 = ExtractItemPriceAndStockIds(shopMenu.itemPriceAndStock);
 #endif
-            if (UnmodifiedShops.Contains(shopMenu.ShopId)) return;
+            if (this.shopPriceModel.UnmodifiedShops?.Contains(shopMenu.ShopId) == true) return;
           
             foreach (var kvp in shopMenu.itemPriceAndStock)
             {
            
                 // do nothing if no item id
                 if (string.IsNullOrEmpty(kvp.Value.SyncedKey)) continue;
-                if (shopMenu.ShopId == "VolcanoShop")
-                {
-                    if (kvp.Value.SyncedKey == "(O)Book_Diamonds") continue;
-                    else if (kvp.Value.SyncedKey == "(B)853") continue;
-                }
-                else if (shopMenu.ShopId == "LostItems")
-                {
-                    // apparently _ALL_ items here are 10k
-                    // https://stardewvalleywiki.com/Secret_Woods#Lost_Items_Shop
-                    kvp.Value.Price = 10_000;
-                    continue;
-                }
+                
+                // attempt to set the item based on the config model
+                if (this.TryConfigBasedOverride(shopMenu.ShopId, kvp.Value)) continue;
              
                 // if the price isnt 'automatic' just keep the original price
                 if (kvp.Value.Price != -1 && kvp.Value.Price != 0) continue;

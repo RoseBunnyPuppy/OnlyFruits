@@ -1,0 +1,66 @@
+﻿{
+  "PriceOverrides": {
+    "VolcanoShop": {
+      "ItemPrices": {
+        "(O)Book_Diamonds": 0,
+        "(B)853": 0
+      }
+    },
+    "LostItems": {
+      "FallbackPrice": 10000
+    }
+  },
+  "UnmodifiedShops": [
+    "## catalogues allow all stuff to be purchased for free",
+    "Catalogue",
+    "Furniture Catalogue",
+    "JojaFurnitureCatalogue",
+    "JunimoFurnitureCatalogue",
+    "RetroFurnitureCatalogue",
+    "TrashFurnitureCatalogue",
+    "WizardFurnitureCatalogue",
+
+    "## nothing here should cost gold",
+    "DesertTrade",
+    
+    "## nothing here should cost gold",
+    "BooksellerTrade",
+
+    "## desert festival villager shops",
+    "DesertFestival_Abigail",
+    "DesertFestival_Alex",
+    "DesertFestival_Caroline",
+    "DesertFestival_Clint",
+    "DesertFestival_Demetrius",
+    "DesertFestival_Elliott",
+    "DesertFestival_Emily",
+    "DesertFestival_Evelyn",
+    "DesertFestival_George",
+    "DesertFestival_Gus",
+    "DesertFestival_Haley",
+    "DesertFestival_Harvey",
+    "DesertFestival_Jas",
+    "DesertFestival_Jodi",
+    "DesertFestival_Kent",
+    "DesertFestival_Leah",
+    "DesertFestival_Leo",
+    "DesertFestival_Marnie",
+    "DesertFestival_Maru",
+    "DesertFestival_Pam",
+    "DesertFestival_Penny",
+    "DesertFestival_Pierre",
+    "DesertFestival_Robin",
+    "DesertFestival_Sam",
+    "DesertFestival_Sebastian",
+    "DesertFestival_Shane",
+    "DesertFestival_Vincent",
+
+    "## calico egg merchant",
+    "DesertFestival_EggShop",
+
+    "## other non-gold shops",
+    "QiGemShop",
+    "IslandTrade",
+    "Raccoon"
+  ]
+}
